@@ -1,69 +1,153 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useMemo, useState } from "react";
+import { priceFrom, useStore } from "@/lib/store";
+import { CATEGORIES, type Product } from "@/lib/types";
+import { currency } from "@/lib/format";
+import { useI18n } from "@/lib/i18n";
+import { categoryKey } from "@/lib/labels";
+import { CupIcon } from "@/components/icons";
+import PosTopbar from "@/components/PosTopbar";
+import CartPanel from "@/components/CartPanel";
+import ProductSheet from "@/components/ProductSheet";
+import OpenTillDialog from "@/components/OpenTillDialog";
+
+export default function PosPage() {
+  const { products, cart, shift } = useStore();
+  const { t } = useI18n();
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<string>("All");
+  const [variantOf, setVariantOf] = useState<Product | null>(null);
+  /** Product the cashier picked before opening a shift — resumed once the till is open. */
+  const [pending, setPending] = useState<Product | null>(null);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return products.filter(
+      (p) =>
+        (category === "All" || p.category === category) &&
+        (!q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q))
+    );
+  }, [products, query, category]);
+
+  /** Units of each product currently in the cart, across every configuration. */
+  const inCart = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const l of cart) map.set(l.productId, (map.get(l.productId) ?? 0) + l.qty);
+    return map;
+  }, [cart]);
+
+  // Nothing goes into the cart until a shift is open — the sale needs a cashier and a till.
+  const pick = (p: Product) => {
+    if (p.stock <= 0) return;
+    if (!shift) {
+      setPending(p);
+      return;
+    }
+    setVariantOf(p);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="flex h-full">
+      <section className="flex min-w-0 flex-1 flex-col">
+        <PosTopbar query={query} onQuery={setQuery} />
+
+        {/* Categories */}
+        <div className="flex shrink-0 items-center gap-2.5 overflow-x-auto border-b border-line px-6 py-4">
+          {["All", ...CATEGORIES].map((c) => (
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={[
+                "h-11 shrink-0 rounded-full border px-6 text-[15px] font-medium transition-colors",
+                category === c
+                  ? "border-neutral-900 bg-neutral-900 text-white"
+                  : "border-line text-neutral-600 hover:border-neutral-300 hover:text-neutral-900",
+              ].join(" ")}
+            >
+              {c === "All" ? t("common.all") : t(categoryKey(c))}
+            </button>
+          ))}
+        </div>
+
+        {/* Menu grid */}
+        <div className="flex-1 overflow-y-auto bg-surface p-6">
+          {filtered.length === 0 ? (
+            <div className="grid h-full place-items-center text-center">
+              <div>
+                <p className="text-[15px] font-medium">{t("pos.noMatch")}</p>
+                <p className="mt-1 text-sm text-muted">{t("pos.noMatchHint")}</p>
+              </div>
+            </div>
+          ) : (
+            <ul className="grid grid-cols-3 gap-3.5 md:grid-cols-4 lg:grid-cols-6">
+              {filtered.map((p) => {
+                const out = p.stock <= 0;
+                const count = inCart.get(p.id) ?? 0;
+                return (
+                  <li key={p.id}>
+                    <div
+                      onClick={() => pick(p)}
+                      className={[
+                        "group flex h-full flex-col overflow-hidden rounded-2xl border bg-white transition-all",
+                        count > 0 ? "border-neutral-900 ring-1 ring-neutral-900" : "border-line",
+                        out
+                          ? "opacity-50"
+                          : "cursor-pointer hover:shadow-[0_6px_24px_rgba(0,0,0,0.06)]",
+                        !out && count === 0 ? "hover:border-neutral-300" : "",
+                      ].join(" ")}
+                    >
+                      <div className="relative m-2 mb-0 grid aspect-[4/3] place-items-center overflow-hidden rounded-lg bg-neutral-100">
+                        <CupIcon className="h-11 w-11 text-neutral-300 transition-colors group-hover:text-neutral-400" />
+                        <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-md bg-white/95 px-2 py-0.5 text-[10px] font-medium shadow-sm">
+                          {t(categoryKey(p.category))}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-1 flex-col p-3">
+                        <p className="line-clamp-2 text-[13px] font-semibold leading-snug tracking-tight">
+                          {p.name}
+                        </p>
+                        <div className="mt-auto flex items-end justify-between gap-1 pt-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-[10px] text-muted">
+                              {out
+                                ? t("pos.outOfStock")
+                                : p.variants.length > 1
+                                  ? t("pos.from")
+                                  : t("pos.price")}
+                            </p>
+                            <p className="text-base font-semibold tracking-tight tabular-nums">
+                              {currency(priceFrom(p))}
+                            </p>
+                          </div>
+                          {count > 0 && (
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-neutral-900 text-sm font-semibold tabular-nums text-white">
+                              {count}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      <CartPanel />
+
+      {variantOf && <ProductSheet product={variantOf} onClose={() => setVariantOf(null)} />}
+
+      {pending && (
+        <OpenTillDialog
+          notice={t("till.requiredForOrder", { product: pending.name })}
+          onClose={() => setPending(null)}
+          onOpened={() => setVariantOf(pending)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
     </div>
   );
 }

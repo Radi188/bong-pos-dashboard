@@ -28,7 +28,10 @@ export default function ProductSheet({
   line?: CartLine;
   onClose: () => void;
 }) {
-  const { addLine, updateLine, removeLine } = useStore();
+  const { addLine, updateLine, removeLine, toppingsFor } = useStore();
+  // Only the toppings this drink offers, resolved live so a price edit in the
+  // library reaches the till without touching the product.
+  const offered = toppingsFor(product);
   const { t } = useI18n();
   const editing = Boolean(line);
 
@@ -198,13 +201,13 @@ export default function ProductSheet({
             </>
           )}
 
-          {product.addons && product.addons.length > 0 && (
+          {offered.length > 0 && (
             <Group
               label={t(categoryKey(product.category))}
               badge={t("common.optional")}
             >
               <ul className="space-y-2.5">
-                {product.addons.map((a) => {
+                {offered.map((a) => {
                   const checked = addons.some((x) => x.id === a.id);
                   return (
                     <li key={a.id}>

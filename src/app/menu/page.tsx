@@ -17,6 +17,7 @@ import { useI18n } from "@/lib/i18n";
 import { categoryKey } from "@/lib/labels";
 import { currency } from "@/lib/format";
 import {
+  BoxIcon,
   CloseIcon,
   CupIcon,
   GridIcon,
@@ -28,6 +29,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import { Toggle } from "@/components/settings-ui";
 import PriceTag from "@/components/PriceTag";
+import ToppingsDialog from "@/components/ToppingsDialog";
 
 const blank = (): Product => ({
   id: "",
@@ -35,6 +37,7 @@ const blank = (): Product => ({
   category: "Coffee Time",
   sku: "",
   variants: [{ id: "s", label: "Small", price: 0 }],
+  addonIds: [],
   onDigitalMenu: true,
 });
 
@@ -47,6 +50,7 @@ export default function MenuPage() {
   const [category, setCategory] = useState<string>("All");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [editing, setEditing] = useState<Product | null>(null);
+  const [toppingsOpen, setToppingsOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -91,6 +95,13 @@ export default function MenuPage() {
             className="h-12 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-[15px] outline-none transition-colors placeholder:text-muted focus:border-neutral-900 focus:bg-white"
           />
         </div>
+        <button
+          onClick={() => setToppingsOpen(true)}
+          className="flex h-12 items-center gap-2 rounded-2xl border border-line px-4 text-sm font-medium transition-colors hover:border-neutral-900"
+        >
+          <BoxIcon className="h-[18px] w-[18px]" />
+          {t("menu.toppings")}
+        </button>
         <button
           onClick={() => setEditing(blank())}
           className="flex h-12 items-center gap-2 rounded-2xl bg-neutral-900 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
@@ -292,6 +303,10 @@ export default function MenuPage() {
         )}
       </div>
 
+      {toppingsOpen && (
+        <ToppingsDialog onClose={() => setToppingsOpen(false)} />
+      )}
+
       {editing && (
         <ItemDialog
           product={editing}
@@ -394,6 +409,7 @@ function ItemDialog({
   onClose: () => void;
 }) {
   const { t } = useI18n();
+  const { toppings } = useStore();
   const [form, setForm] = useState(product);
   /**
    * A sale price at or above the normal price is not a discount, and the rest
@@ -580,6 +596,78 @@ function ItemDialog({
               </p>
             ) : (
               <p className="mt-2 text-xs text-muted">{t("menu.saleHint")}</p>
+            )}
+          </div>
+
+          {/* Ticking a topping here is what makes it appear at the till. */}
+          <div>
+            <div className="mb-1.5 flex items-baseline gap-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                {t("menu.toppingsOn")}
+              </span>
+              {toppings.length > 0 && (
+                <span className="ml-auto flex gap-1">
+                  <button
+                    onClick={() =>
+                      setForm({ ...form, addonIds: toppings.map((a) => a.id) })
+                    }
+                    className="rounded-lg px-2 py-0.5 text-xs font-medium text-muted transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+                  >
+                    {t("menu.selectAll")}
+                  </button>
+                  <button
+                    onClick={() => setForm({ ...form, addonIds: [] })}
+                    className="rounded-lg px-2 py-0.5 text-xs font-medium text-muted transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+                  >
+                    {t("menu.selectNone")}
+                  </button>
+                </span>
+              )}
+            </div>
+
+            {toppings.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-neutral-300 px-4 py-3 text-xs text-muted">
+                {t("menu.toppingsNone")}
+              </p>
+            ) : (
+              <>
+                <ul className="flex flex-wrap gap-2">
+                  {toppings.map((a) => {
+                    const on = form.addonIds?.includes(a.id) ?? false;
+                    return (
+                      <li key={a.id}>
+                        <button
+                          onClick={() =>
+                            setForm((f) => ({
+                              ...f,
+                              addonIds: on
+                                ? (f.addonIds ?? []).filter((x) => x !== a.id)
+                                : [...(f.addonIds ?? []), a.id],
+                            }))
+                          }
+                          aria-pressed={on}
+                          className={[
+                            "rounded-xl border px-3 py-2 text-sm transition-colors",
+                            on
+                              ? "border-neutral-900 bg-neutral-900 text-white"
+                              : "border-line text-neutral-700 hover:border-neutral-300",
+                          ].join(" ")}
+                        >
+                          {a.name}
+                          <span
+                            className={`ml-1.5 tabular-nums ${on ? "text-neutral-400" : "text-muted"}`}
+                          >
+                            +{currency(a.price)}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-2 text-xs text-muted">
+                  {t("menu.toppingsHint")}
+                </p>
+              </>
             )}
           </div>
 

@@ -10,6 +10,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import type {
+  Addon,
   Branch,
   CartLine,
   DiscountMode,
@@ -45,15 +46,18 @@ type Result = { ok: boolean; error?: TranslationKey };
  * Backfill them on load; drinks get the standard toppings, food gets none.
  */
 function migrateProducts(list: Product[]): Product[] {
-  return list.map((p) =>
-    p.addons !== undefined && p.customisable !== undefined
-      ? p
-      : {
-          ...p,
-          addons: p.addons ?? (p.category === "Snack" ? [] : TOPPINGS),
-          customisable: p.customisable ?? p.category !== "Snack",
-        },
-  );
+  return list.map((p) => {
+    if (p.addonIds !== undefined && p.customisable !== undefined) return p;
+    // Items saved before the topping library held their own copies; keep the
+    // same toppings by reference so a price edit now reaches every drink.
+    const fromCopies = p.addons?.map((a) => a.id);
+    const byCategory = p.category === "Snack" ? [] : TOPPINGS.map((a) => a.id);
+    return {
+      ...p,
+      addonIds: p.addonIds ?? fromCopies ?? byCategory,
+      customisable: p.customisable ?? p.category !== "Snack",
+    };
+  });
 }
 
 const KEYS = {
@@ -66,6 +70,7 @@ const KEYS = {
   branches: "pos.branches",
   storeName: "pos.storeName",
   rolePermissions: "pos.rolePermissions",
+  toppings: "pos.toppings",
   knownPaths: "pos.knownPaths",
   paymentMethods: "pos.paymentMethods",
 };
@@ -126,6 +131,11 @@ type Store = {
 
   saveProduct: (p: Product) => void;
   deleteProduct: (id: string) => void;
+  toppings: Addon[];
+  saveTopping: (a: Addon) => void;
+  deleteTopping: (id: string) => void;
+  /** The toppings an item offers, resolved from the library in library order. */
+  toppingsFor: (p: Product) => Addon[];
   addExpense: (note: string, amount: number) => void;
 };
 
@@ -228,6 +238,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       ),
     ),
   );
+  const [toppings, setToppings] = useState<Addon[]>(() =>
+    onClient(TOPPINGS, () => read<Addon[]>(KEYS.toppings, TOPPINGS)),
+  );
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(() =>
     onClient(DEFAULT_PAYMENT_METHODS, () => {
       const stored = read<PaymentMethod[] | null>(KEYS.paymentMethods, null);
@@ -257,6 +270,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (ready) localStorage.setItem(KEYS.products, JSON.stringify(products));
   }, [products, ready]);
+  useEffect(() => {
+    if (ready) localStorage.setItem(KEYS.toppings, JSON.stringify(toppings));
+  }, [toppings, ready]);
   useEffect(() => {
     if (ready) localStorage.setItem(KEYS.orders, JSON.stringify(orders));
   }, [orders, ready]);
@@ -474,6 +490,31 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const saveTopping = useCallback((a: Addon) => {
+    setToppings((prev) =>
+      prev.some((x) => x.id === a.id)
+        ? prev.map((x) => (x.id === a.id ? a : x))
+        : [...prev, a],
+    );
+  }, []);
+
+  /** Removing a topping also withdraws it from every drink that offered it. */
+  const deleteTopping = useCallback((id: string) => {
+    setToppings((prev) => prev.filter((a) => a.id !== id));
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.addonIds?.includes(id)
+          ? { ...p, addonIds: p.addonIds.filter((x) => x !== id) }
+          : p,
+      ),
+    );
+  }, []);
+
+  const toppingsFor = useCallback(
+    (p: Product) => toppings.filter((a) => p.addonIds?.includes(a.id)),
+    [toppings],
+  );
+
   const deleteProduct = useCallback((id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setCart((prev) => prev.filter((l) => l.productId !== id));
@@ -534,6 +575,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     canAccess,
     saveProduct,
     deleteProduct,
+    toppings,
+    saveTopping,
+    deleteTopping,
+    toppingsFor,
     addExpense,
   };
 

@@ -61,8 +61,39 @@ body {
   background: #a3a3a3;
 }
 
+/* Stickers are stationery, not screen UI — they exist only to be printed. */
+.print-labels {
+  display: none;
+}
+
 @media print {
   .no-print {
     display: none !important;
+  }
+
+  /*
+   * A sticker run puts nothing else on the roll: everything is hidden, then the
+   * labels alone are made visible and pulled to the top of the page.
+   */
+  html[data-print="labels"] body * {
+    visibility: hidden;
+  }
+  html[data-print="labels"] .print-labels,
+  html[data-print="labels"] .print-labels * {
+    visibility: visible;
+  }
+  html[data-print="labels"] .print-labels {
+    display: flex !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  html[data-print="labels"] .label-sticker {
+    break-inside: avoid;
+    page-break-after: always;
+  }
+  html[data-print="labels"] .label-sticker:last-child {
+    page-break-after: auto;
   }
 }

@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
-import type { ReceiptAction, ShiftReportMode } from "@/lib/types";
+import type { LabelAction, ReceiptAction, ShiftReportMode } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import PrinterDialog from "@/components/PrinterDialog";
 import {
   BoltIcon,
+  BoxIcon,
   CardIcon,
+  CloseIcon,
   ExchangeIcon,
   EyeIcon,
   HandIcon,
@@ -35,7 +37,10 @@ export default function SettingsPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <PageHeader title={t("nav.settings")} subtitle={t("settings.subtitle", { branch: branch.name })} />
+      <PageHeader
+        title={t("nav.settings")}
+        subtitle={t("settings.subtitle", { branch: branch.name })}
+      />
 
       <div className="flex-1 overflow-y-auto bg-surface p-6">
         <div className="mx-auto max-w-3xl space-y-5">
@@ -76,6 +81,68 @@ export default function SettingsPage() {
                 />
               </SettingRow>
             </div>
+          </SettingsCard>
+
+          <SettingsCard
+            title={t("settings.labels")}
+            description={t("settings.labelsDesc")}
+          >
+            <ChoiceGrid<LabelAction>
+              value={settings.labelAction}
+              onChange={(v) => updateSettings({ labelAction: v })}
+              options={[
+                {
+                  id: "off",
+                  label: t("settings.labelOff"),
+                  description: t("settings.labelOffDesc"),
+                  Icon: CloseIcon,
+                },
+                {
+                  id: "direct",
+                  label: t("settings.printDirect"),
+                  description: t("settings.labelDirectDesc"),
+                  Icon: BoltIcon,
+                },
+              ]}
+            />
+
+            {/* Size and per-item live on the label printer, but belong in reach
+                of the switch that decides whether labels print at all. */}
+            {settings.labelAction !== "off" && (
+              <div className="mt-5">
+                <Divider />
+                <SettingRow
+                  Icon={TagIcon}
+                  title={t("settings.labelSize")}
+                  subtitle={
+                    lp.connected
+                      ? `${lp.size.width} × ${lp.size.height} mm · ${
+                          lp.name || t("settings.unnamedPrinter")
+                        }`
+                      : t("settings.labelNoPrinter")
+                  }
+                  onClick={() => setDialog("label")}
+                >
+                  <span className="shrink-0 rounded-xl border border-line px-4 py-2.5 text-sm font-medium">
+                    {t("settings.change")}
+                  </span>
+                </SettingRow>
+                <Divider />
+                <SettingRow
+                  Icon={BoxIcon}
+                  title={t("printer.perItem")}
+                  subtitle={t("printer.perItemBlurb")}
+                >
+                  <Toggle
+                    checked={lp.perItem}
+                    onChange={(v) =>
+                      updateSettings({ labelPrinter: { ...lp, perItem: v } })
+                    }
+                    label={t("printer.perItem")}
+                  />
+                </SettingRow>
+              </div>
+            )}
           </SettingsCard>
 
           <SettingsCard
@@ -121,7 +188,10 @@ export default function SettingsPage() {
               }
               onClick={() => setDialog("receipt")}
             >
-              <StatusPill on={rp.connected} label={rp.connected ? t("settings.on") : t("settings.off")} />
+              <StatusPill
+                on={rp.connected}
+                label={rp.connected ? t("settings.on") : t("settings.off")}
+              />
             </SettingRow>
             <Divider />
             <SettingRow
@@ -134,7 +204,10 @@ export default function SettingsPage() {
               }
               onClick={() => setDialog("label")}
             >
-              <StatusPill on={lp.connected} label={lp.connected ? t("settings.on") : t("settings.off")} />
+              <StatusPill
+                on={lp.connected}
+                label={lp.connected ? t("settings.on") : t("settings.off")}
+              />
             </SettingRow>
           </SettingsCard>
 
@@ -147,17 +220,21 @@ export default function SettingsPage() {
               Icon={ExchangeIcon}
               title={t("settings.exchangeRate")}
               subtitle={`$1.00 = ${new Intl.NumberFormat("en-US").format(
-                settings.khrRate
+                settings.khrRate,
               )} ៛ · $5.00 = ${new Intl.NumberFormat("en-US").format(settings.khrRate * 5)} ៛`}
             >
               <div className="flex shrink-0 items-center gap-2">
-                <span className="text-sm text-muted">{t("settings.oneUsd")}</span>
+                <span className="text-sm text-muted">
+                  {t("settings.oneUsd")}
+                </span>
                 <input
                   inputMode="numeric"
                   value={settings.khrRate || ""}
                   onChange={(e) =>
                     updateSettings({
-                      khrRate: Number(e.target.value.replace(/[^0-9]/g, "") || 0),
+                      khrRate: Number(
+                        e.target.value.replace(/[^0-9]/g, "") || 0,
+                      ),
                     })
                   }
                   className="h-11 w-28 rounded-xl border border-line px-3 text-right text-[15px] tabular-nums outline-none transition-colors focus:border-neutral-900"
@@ -198,7 +275,9 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {dialog && <PrinterDialog kind={dialog} onClose={() => setDialog(null)} />}
+      {dialog && (
+        <PrinterDialog kind={dialog} onClose={() => setDialog(null)} />
+      )}
     </div>
   );
 }

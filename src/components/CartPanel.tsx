@@ -7,7 +7,7 @@ import { useStore } from "@/lib/store";
 import type { CartLine } from "@/lib/types";
 import { currency } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import { lineOptions, lineSubtotal, lineTotal } from "@/lib/cart";
+import { lineAddons, lineConfig, lineSubtotal, lineTotal } from "@/lib/cart";
 import { CartIcon, MinusIcon, PlusIcon, TrashIcon } from "./icons";
 import PaymentModal from "./PaymentModal";
 import ProductSheet from "./ProductSheet";
@@ -84,70 +84,91 @@ export default function CartPanel() {
         ) : (
           <ul className="divide-y divide-line">
             {cart.map((l) => {
-              const options = lineOptions(l);
+              const config = lineConfig(l);
+              const extras = lineAddons(l);
               return (
-                <li
-                  key={l.id}
-                  className="group flex items-start gap-3 px-6 py-3"
-                >
-                  <button
-                    onClick={() => setEditing(l)}
-                    title={t("cart.editItem")}
-                    className="min-w-0 flex-1 py-0.5 text-left"
-                  >
-                    <span className="block truncate text-[15px] font-medium leading-tight underline-offset-4 group-hover:underline">
-                      {l.name}
-                    </span>
-                    {options && (
-                      <span className="mt-1 block truncate text-xs leading-tight text-muted">
-                        {options}
+                <li key={l.id} className="group px-6 py-3">
+                  <div className="flex items-start gap-3">
+                    <button
+                      onClick={() => setEditing(l)}
+                      title={t("cart.editItem")}
+                      className="min-w-0 flex-1 py-0.5 text-left"
+                    >
+                      <span className="block truncate text-[15px] font-medium leading-tight underline-offset-4 group-hover:underline">
+                        {l.name}
                       </span>
-                    )}
-                    {l.note && (
-                      <span className="mt-1 block truncate text-xs italic leading-tight text-neutral-500">
-                        &ldquo;{l.note}&rdquo;
-                      </span>
-                    )}
-                  </button>
-
-                  {/* Price and stepper share the right rail so a line stays one row tall. */}
-                  <div className="flex shrink-0 flex-col items-end gap-1.5">
-                    <span className="flex items-baseline gap-1.5 leading-tight">
-                      {lineTotal(l) !== lineSubtotal(l) && (
-                        <span className="text-xs tabular-nums text-muted line-through">
-                          {currency(lineSubtotal(l))}
+                      {config && (
+                        <span className="mt-1 block truncate text-xs leading-tight text-muted">
+                          {config}
                         </span>
                       )}
-                      <span className="text-[15px] font-semibold tabular-nums">
-                        {currency(lineTotal(l))}
-                      </span>
-                    </span>
+                    </button>
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => removeLine(l.id)}
-                        aria-label={t("cart.remove")}
-                        className="mr-0.5 grid h-7 w-7 place-items-center rounded-lg text-muted opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-900 focus:opacity-100 group-hover:opacity-100"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                      <StepButton
-                        onClick={() => setQty(l.id, l.qty - 1)}
-                        label={t("cart.decrease")}
-                      >
-                        <MinusIcon className="h-3.5 w-3.5" />
-                      </StepButton>
-                      <span className="w-6 text-center text-sm font-semibold tabular-nums">
-                        {l.qty}
+                    {/* Price and stepper share the right rail so a line stays one row tall. */}
+                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                      <span className="flex items-baseline gap-1.5 leading-tight">
+                        {lineTotal(l) !== lineSubtotal(l) && (
+                          <span className="text-xs tabular-nums text-muted line-through">
+                            {currency(lineSubtotal(l))}
+                          </span>
+                        )}
+                        <span className="text-[15px] font-semibold tabular-nums">
+                          {currency(lineTotal(l))}
+                        </span>
                       </span>
-                      <StepButton
-                        onClick={() => setQty(l.id, l.qty + 1)}
-                        label={t("cart.increase")}
-                      >
-                        <PlusIcon className="h-3.5 w-3.5" />
-                      </StepButton>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => removeLine(l.id)}
+                          aria-label={t("cart.remove")}
+                          className="mr-0.5 grid h-7 w-7 place-items-center rounded-lg text-muted opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-900 focus:opacity-100 group-hover:opacity-100"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                        <StepButton
+                          onClick={() => setQty(l.id, l.qty - 1)}
+                          label={t("cart.decrease")}
+                        >
+                          <MinusIcon className="h-3.5 w-3.5" />
+                        </StepButton>
+                        <span className="w-6 text-center text-sm font-semibold tabular-nums">
+                          {l.qty}
+                        </span>
+                        <StepButton
+                          onClick={() => setQty(l.id, l.qty + 1)}
+                          label={t("cart.increase")}
+                        >
+                          <PlusIcon className="h-3.5 w-3.5" />
+                        </StepButton>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Toppings get a line each — a long order has to be checkable
+                      against the cup without anything truncated away. */}
+                  {extras.length > 0 && (
+                    <ul className="mt-1.5 space-y-1 border-l-2 border-line pl-2.5">
+                      {extras.map((a) => (
+                        <li
+                          key={a.id}
+                          className="flex items-baseline gap-2 text-xs leading-tight"
+                        >
+                          <span className="min-w-0 flex-1 text-neutral-600">
+                            {a.name}
+                          </span>
+                          <span className="shrink-0 tabular-nums text-muted">
+                            +{currency(a.price)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {l.note && (
+                    <p className="mt-1.5 text-xs italic leading-snug text-neutral-500">
+                      &ldquo;{l.note}&rdquo;
+                    </p>
+                  )}
                 </li>
               );
             })}

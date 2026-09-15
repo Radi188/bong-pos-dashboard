@@ -15,7 +15,10 @@ export const lineDiscount = (l: CartLine) => {
   const value = l.discountValue ?? 0;
   if (value <= 0) return 0;
   const subtotal = lineSubtotal(l);
-  const raw = l.discountMode === "amount" ? value : (subtotal * Math.min(value, 100)) / 100;
+  const raw =
+    l.discountMode === "amount"
+      ? value
+      : (subtotal * Math.min(value, 100)) / 100;
   return Math.min(subtotal, raw);
 };
 
@@ -38,8 +41,27 @@ export const lineKey = (l: Omit<CartLine, "id" | "qty">) =>
     (l.note ?? "").trim().toLowerCase(),
   ].join("|");
 
+/**
+ * The drink's own settings, without toppings: "Large · 50% sugar · No Ice".
+ * The cart lists toppings separately so a long order stays checkable.
+ */
+export const lineConfig = (l: CartLine) =>
+  [l.variantLabel, l.sugar && `${l.sugar} sugar`, l.ice]
+    .filter(Boolean)
+    .join(" · ");
+
+/** Toppings on the line, in the order they were added. */
+export const lineAddons = (l: CartLine) => addons(l);
+
 /** "Large · 50% sugar · No Ice · Black Pearl, Cream" */
 export const lineOptions = (l: CartLine) =>
-  [l.variantLabel, l.sugar && `${l.sugar} sugar`, l.ice, addons(l).map((a) => a.name).join(", ")]
+  [
+    l.variantLabel,
+    l.sugar && `${l.sugar} sugar`,
+    l.ice,
+    addons(l)
+      .map((a) => a.name)
+      .join(", "),
+  ]
     .filter(Boolean)
     .join(" · ");

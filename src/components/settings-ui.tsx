@@ -36,7 +36,11 @@ export function ChoiceGrid<T extends string>({
   }[];
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div
+      className={`grid gap-4 ${
+        options.length > 2 ? "sm:grid-cols-3" : "sm:grid-cols-2"
+      }`}
+    >
       {options.map(({ id, label, description, Icon }) => {
         const active = value === id;
         return (
@@ -51,7 +55,9 @@ export function ChoiceGrid<T extends string>({
                 : "border-line bg-white hover:border-neutral-300",
             ].join(" ")}
           >
-            <Icon className={`h-5 w-5 ${active ? "text-white" : "text-neutral-500"}`} />
+            <Icon
+              className={`h-5 w-5 ${active ? "text-white" : "text-neutral-500"}`}
+            />
             <p className="mt-3.5 text-base font-bold tracking-tight">{label}</p>
             <p
               className={`mt-1.5 text-sm leading-relaxed ${
@@ -117,18 +123,27 @@ export function SettingRow({
         <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0 flex-1 text-left">
-        <span className="block text-base font-bold tracking-tight">{title}</span>
-        <span className="mt-0.5 block truncate text-sm text-neutral-500">{subtitle}</span>
+        <span className="block text-base font-bold tracking-tight">
+          {title}
+        </span>
+        <span className="mt-0.5 block truncate text-sm text-neutral-500">
+          {subtitle}
+        </span>
       </span>
       {children}
-      {onClick && <ChevronRightIcon className="h-5 w-5 shrink-0 text-neutral-400" />}
+      {onClick && (
+        <ChevronRightIcon className="h-5 w-5 shrink-0 text-neutral-400" />
+      )}
     </>
   );
 
   const className = "flex w-full items-center gap-4 py-4";
 
   return onClick ? (
-    <button onClick={onClick} className={`${className} -mx-2 rounded-2xl px-2 transition-colors hover:bg-neutral-50`}>
+    <button
+      onClick={onClick}
+      className={`${className} -mx-2 rounded-2xl px-2 transition-colors hover:bg-neutral-50`}
+    >
       {body}
     </button>
   ) : (
@@ -141,10 +156,14 @@ export function StatusPill({ on, label }: { on: boolean; label: string }) {
     <span
       className={[
         "flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
-        on ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-500",
+        on
+          ? "bg-emerald-50 text-emerald-700"
+          : "bg-neutral-100 text-neutral-500",
       ].join(" ")}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${on ? "bg-emerald-500" : "bg-neutral-400"}`} />
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${on ? "bg-emerald-500" : "bg-neutral-400"}`}
+      />
       {label}
     </span>
   );
@@ -165,14 +184,21 @@ export function Segmented<T extends string>({
   options: { id: T; label: string }[];
 }) {
   return (
-    <div className="grid gap-1 rounded-xl bg-neutral-100 p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+    <div
+      className="grid gap-1 rounded-xl bg-neutral-100 p-1"
+      style={{
+        gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`,
+      }}
+    >
       {options.map((o) => (
         <button
           key={o.id}
           onClick={() => onChange(o.id)}
           className={[
             "h-10 rounded-lg text-sm font-medium transition-colors",
-            value === o.id ? "bg-neutral-900 text-white" : "text-neutral-600 hover:text-neutral-900",
+            value === o.id
+              ? "bg-neutral-900 text-white"
+              : "text-neutral-600 hover:text-neutral-900",
           ].join(" ")}
         >
           {o.label}
@@ -182,7 +208,13 @@ export function Segmented<T extends string>({
   );
 }
 
-export function Field({ label, children }: { label: string; children: React.ReactNode }) {
+export function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">

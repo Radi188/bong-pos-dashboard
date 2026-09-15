@@ -41,7 +41,15 @@ export type Product = {
   category: Category;
   sku: string;
   variants: Variant[];
-  /** Optional extras offered with this item, grouped under its category name. */
+  /**
+   * Toppings this item offers, by id into the shop's topping library. Only
+   * these appear when the item is rung up.
+   */
+  addonIds?: string[];
+  /**
+   * @deprecated Embedded topping copies from before the library existed. Read
+   * only by the migration that fills `addonIds`; nothing else should touch it.
+   */
   addons?: Addon[];
   /** Drinks ask for sugar and ice; food does not. */
   customisable?: boolean;
@@ -217,6 +225,8 @@ export type Expense = {
 /* ---------------------------------------------------------------- settings */
 
 export type ReceiptAction = "preview" | "direct";
+/** Stickers either print at checkout or not at all — there is nothing to preview. */
+export type LabelAction = "off" | "direct";
 export type ShiftReportMode = "auto" | "manual";
 export type Connection = "usb" | "bluetooth" | "network";
 
@@ -268,6 +278,7 @@ export type Settings = {
   /** USD to KHR rate used for the till float and receipt conversions. */
   khrRate: number;
   receiptAction: ReceiptAction;
+  labelAction: LabelAction;
   printLogo: boolean;
   shiftReport: ShiftReportMode;
   receiptPrinter: ReceiptPrinter;
@@ -280,6 +291,7 @@ export const DEFAULT_SETTINGS: Settings = {
   khrRate: DEFAULT_KHR_RATE,
   menuTemplate: "classic",
   receiptAction: "preview",
+  labelAction: "off",
   printLogo: true,
   shiftReport: "auto",
   receiptPrinter: {

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useMemo, useState } from "react";
 import {
   isDiscounted,
@@ -7,14 +9,9 @@ import {
   showsOnDigitalMenu,
   useStore,
 } from "@/lib/store";
-import {
-  CATEGORIES,
-  type Category,
-  type Product,
-  type Variant,
-} from "@/lib/types";
+import { type Product, type Variant } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
-import { categoryKey } from "@/lib/labels";
+import { categoryLabel } from "@/lib/labels";
 import { currency } from "@/lib/format";
 import {
   BoxIcon,
@@ -23,6 +20,7 @@ import {
   GridIcon,
   MenuListIcon,
   PlusIcon,
+  ProductsIcon,
   SearchIcon,
   TrashIcon,
 } from "@/components/icons";
@@ -31,10 +29,10 @@ import { Toggle } from "@/components/settings-ui";
 import PriceTag from "@/components/PriceTag";
 import ToppingsDialog from "@/components/ToppingsDialog";
 
-const blank = (): Product => ({
+const blank = (category: string): Product => ({
   id: "",
   name: "",
-  category: "Coffee Time",
+  category,
   sku: "",
   variants: [{ id: "s", label: "Small", price: 0 }],
   addonIds: [],
@@ -42,7 +40,8 @@ const blank = (): Product => ({
 });
 
 export default function MenuPage() {
-  const { products, saveProduct, deleteProduct } = useStore();
+  const { products, saveProduct, deleteProduct, categories, categoryById } =
+    useStore();
   const setOnDigitalMenu = (p: Product, v: boolean) =>
     saveProduct({ ...p, onDigitalMenu: v });
   const [query, setQuery] = useState("");
@@ -65,11 +64,13 @@ export default function MenuPage() {
 
   const grouped = useMemo(
     () =>
-      CATEGORIES.map((c) => ({
-        category: c,
-        items: filtered.filter((p) => p.category === c),
-      })).filter((g) => g.items.length > 0),
-    [filtered],
+      categories
+        .map((c) => ({
+          category: c,
+          items: filtered.filter((p) => p.category === c.id),
+        }))
+        .filter((g) => g.items.length > 0),
+    [filtered, categories],
   );
 
   const onMenu = products.filter(showsOnDigitalMenu).length;
@@ -83,7 +84,7 @@ export default function MenuPage() {
         title={t("nav.menu")}
         subtitle={t("menu.subtitle", {
           items: products.length,
-          categories: CATEGORIES.length,
+          categories: categories.length,
         })}
       >
         <div className="relative hidden w-56 @3xl:block">
@@ -95,6 +96,13 @@ export default function MenuPage() {
             className="h-12 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-[15px] outline-none transition-colors placeholder:text-muted focus:border-neutral-900 focus:bg-white"
           />
         </div>
+        <Link
+          href="/categories"
+          className="flex h-12 items-center gap-2 rounded-2xl border border-line px-4 text-sm font-medium transition-colors hover:border-neutral-900"
+        >
+          <ProductsIcon className="h-[18px] w-[18px]" />
+          {t("menu.categories")}
+        </Link>
         <button
           onClick={() => setToppingsOpen(true)}
           className="flex h-12 items-center gap-2 rounded-2xl border border-line px-4 text-sm font-medium transition-colors hover:border-neutral-900"
@@ -103,7 +111,7 @@ export default function MenuPage() {
           {t("menu.toppings")}
         </button>
         <button
-          onClick={() => setEditing(blank())}
+          onClick={() => setEditing(blank(categories[0]?.id ?? ""))}
           className="flex h-12 items-center gap-2 rounded-2xl bg-neutral-900 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
         >
           <PlusIcon className="h-[18px] w-[18px]" />
@@ -124,26 +132,26 @@ export default function MenuPage() {
 
         {/* Filters */}
         <div className="mt-4 flex flex-wrap items-center gap-2.5">
-          {["All", ...CATEGORIES].map((c) => {
+          {[{ id: "All", name: "" }, ...categories].map((c) => {
             const n =
-              c === "All"
+              c.id === "All"
                 ? products.length
-                : products.filter((p) => p.category === c).length;
+                : products.filter((p) => p.category === c.id).length;
             return (
               <button
-                key={c}
-                onClick={() => setCategory(c)}
+                key={c.id}
+                onClick={() => setCategory(c.id)}
                 className={[
                   "flex h-11 items-center gap-2 rounded-2xl border px-5 text-[15px] font-semibold transition-colors",
-                  category === c
+                  category === c.id
                     ? "border-neutral-900 bg-neutral-900 text-white"
                     : "border-line bg-white text-neutral-700 hover:border-neutral-300",
                 ].join(" ")}
               >
-                {c === "All" ? t("common.all") : t(categoryKey(c))}
+                {c.id === "All" ? t("common.all") : categoryLabel(c, t)}
                 <span
                   className={`text-xs tabular-nums ${
-                    category === c ? "text-neutral-400" : "text-muted"
+                    category === c.id ? "text-neutral-400" : "text-muted"
                   }`}
                 >
                   {n}
@@ -184,10 +192,10 @@ export default function MenuPage() {
         ) : view === "grid" ? (
           <div className="mt-4 space-y-6">
             {grouped.map((g) => (
-              <section key={g.category}>
+              <section key={g.category.id}>
                 <div className="flex items-baseline gap-2.5">
                   <h2 className="text-lg font-bold tracking-tight">
-                    {t(categoryKey(g.category))}
+                    {categoryLabel(g.category, t)}
                   </h2>
                   <span className="text-sm text-muted tabular-nums">
                     {g.items.length}
@@ -254,7 +262,11 @@ export default function MenuPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className="rounded-lg bg-neutral-100 px-2.5 py-1 text-sm font-medium">
-                          {t(categoryKey(p.category))}
+                          {categoryLabel(
+                            categoryById(p.category),
+                            t,
+                            p.category,
+                          )}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-muted">
@@ -409,7 +421,7 @@ function ItemDialog({
   onClose: () => void;
 }) {
   const { t } = useI18n();
-  const { toppings } = useStore();
+  const { toppings, categories } = useStore();
   const [form, setForm] = useState(product);
   /**
    * A sale price at or above the normal price is not a discount, and the rest
@@ -476,14 +488,12 @@ function ItemDialog({
             <Field label={t("menu.category")}>
               <select
                 value={form.category}
-                onChange={(e) =>
-                  setForm({ ...form, category: e.target.value as Category })
-                }
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
                 className="h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] outline-none transition-colors focus:border-neutral-900"
               >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {t(categoryKey(c))}
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {categoryLabel(c, t)}
                   </option>
                 ))}
               </select>

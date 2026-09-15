@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  CATEGORIES,
+  type Category,
   type MenuTemplate,
   type Product,
   type Variant,
@@ -15,7 +15,7 @@ import {
 } from "@/lib/store";
 import { currency } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import { categoryKey } from "@/lib/labels";
+import { categoryLabel } from "@/lib/labels";
 import { useStore } from "@/lib/store";
 import { CupIcon } from "./icons";
 
@@ -30,7 +30,7 @@ export const templateKey = (t: MenuTemplate) =>
 const priced = (p: Product) => p.variants.length > 1;
 
 type Tone = "light" | "dark";
-type Group = { category: string; items: Product[] };
+type Group = { category: Category; items: Product[] };
 
 /**
  * What a customer sees. Only items flagged onto the digital menu appear, and
@@ -41,14 +41,16 @@ export default function DigitalMenuPreview({
 }: {
   template: MenuTemplate;
 }) {
-  const { products, storeName } = useStore();
+  const { products, storeName, categories } = useStore();
   const { t } = useI18n();
 
   const shown = products.filter(showsOnDigitalMenu);
-  const groups = CATEGORIES.map((c) => ({
-    category: c,
-    items: shown.filter((p) => p.category === c),
-  })).filter((g) => g.items.length > 0);
+  const groups = categories
+    .map((c) => ({
+      category: c,
+      items: shown.filter((p) => p.category === c.id),
+    }))
+    .filter((g) => g.items.length > 0);
 
   if (groups.length === 0) {
     return (
@@ -144,9 +146,9 @@ function Classic({
 
       <div className="mt-8 space-y-8">
         {groups.map((g) => (
-          <section key={g.category}>
+          <section key={g.category.id}>
             <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-muted">
-              {t(categoryKey(g.category))}
+              {categoryLabel(g.category, t)}
             </h2>
             <ul className="mt-3 space-y-4">
               {g.items.map((p) =>
@@ -199,9 +201,9 @@ function Board({ storeName, groups }: { storeName: string; groups: Group[] }) {
 
       <div className="mt-9 grid gap-x-10 gap-y-7 sm:grid-cols-2">
         {groups.map((g) => (
-          <section key={g.category}>
+          <section key={g.category.id}>
             <h2 className="border-b border-white/15 pb-2 text-sm font-bold uppercase tracking-[0.15em] text-white/70">
-              {t(categoryKey(g.category))}
+              {categoryLabel(g.category, t)}
             </h2>
             <ul className="mt-3 space-y-3.5">
               {g.items.map((p) => (
@@ -248,9 +250,9 @@ function Cards({ storeName, groups }: { storeName: string; groups: Group[] }) {
 
       <div className="mt-6 space-y-7">
         {groups.map((g) => (
-          <section key={g.category}>
+          <section key={g.category.id}>
             <h2 className="text-lg font-bold tracking-tight">
-              {t(categoryKey(g.category))}
+              {categoryLabel(g.category, t)}
             </h2>
             <ul className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
               {g.items.map((p) => (

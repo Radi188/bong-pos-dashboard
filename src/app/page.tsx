@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { CATEGORIES, type Product } from "@/lib/types";
+import type { Product } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
-import { categoryKey } from "@/lib/labels";
+import { categoryLabel } from "@/lib/labels";
 import { CupIcon } from "@/components/icons";
 import PosTopbar from "@/components/PosTopbar";
 import CartPanel from "@/components/CartPanel";
@@ -13,7 +13,7 @@ import ProductSheet from "@/components/ProductSheet";
 import OpenTillDialog from "@/components/OpenTillDialog";
 
 export default function PosPage() {
-  const { products, cart, shift } = useStore();
+  const { products, cart, shift, categories, categoryById } = useStore();
   const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
@@ -56,18 +56,18 @@ export default function PosPage() {
 
         {/* Categories */}
         <div className="flex shrink-0 items-center gap-2.5 overflow-x-auto border-b border-line px-6 py-4">
-          {["All", ...CATEGORIES].map((c) => (
+          {[{ id: "All", name: "" }, ...categories].map((c) => (
             <button
-              key={c}
-              onClick={() => setCategory(c)}
+              key={c.id}
+              onClick={() => setCategory(c.id)}
               className={[
                 "h-11 shrink-0 rounded-full border px-6 text-[15px] font-medium transition-colors",
-                category === c
+                category === c.id
                   ? "border-neutral-900 bg-neutral-900 text-white"
                   : "border-line text-neutral-600 hover:border-neutral-300 hover:text-neutral-900",
               ].join(" ")}
             >
-              {c === "All" ? t("common.all") : t(categoryKey(c))}
+              {c.id === "All" ? t("common.all") : categoryLabel(c, t)}
             </button>
           ))}
         </div>
@@ -101,7 +101,11 @@ export default function PosPage() {
                       <div className="relative m-2 mb-0 grid aspect-[4/3] place-items-center overflow-hidden rounded-lg bg-neutral-100">
                         <CupIcon className="h-11 w-11 text-neutral-300 transition-colors group-hover:text-neutral-400" />
                         <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-md bg-white/95 px-2 py-0.5 text-[10px] font-medium shadow-sm">
-                          {t(categoryKey(p.category))}
+                          {categoryLabel(
+                            categoryById(p.category),
+                            t,
+                            p.category,
+                          )}
                         </span>
                       </div>
 

@@ -1,12 +1,22 @@
-export const CATEGORIES = [
-  "Coffee Time",
-  "Matcha",
-  "Fresh Tea",
-  "Sweet",
-  "Snack",
-] as const;
+/**
+ * A menu section. The id doubles as the built-in ones' English name, so drinks
+ * saved before categories were editable already point at the right id and need
+ * no migration.
+ */
+export type Category = {
+  id: string;
+  name: string;
+  /** Ships with the app, so its name is translated rather than shown verbatim. */
+  builtIn?: boolean;
+};
 
-export type Category = (typeof CATEGORIES)[number];
+export const DEFAULT_CATEGORIES: Category[] = [
+  { id: "Coffee Time", name: "Coffee Time", builtIn: true },
+  { id: "Matcha", name: "Matcha", builtIn: true },
+  { id: "Fresh Tea", name: "Fresh Tea", builtIn: true },
+  { id: "Sweet", name: "Sweet", builtIn: true },
+  { id: "Snack", name: "Snack", builtIn: true },
+];
 
 export type Variant = {
   id: string;
@@ -38,7 +48,8 @@ export type IceLevel = (typeof ICE_LEVELS)[number];
 export type Product = {
   id: string;
   name: string;
-  category: Category;
+  /** Category id — see the shop's category list. */
+  category: string;
   sku: string;
   variants: Variant[];
   /**
@@ -342,6 +353,7 @@ export const PERMISSIONS: { path: string; label: string }[] = [
   { path: "/sale-drafts", label: "Sale Drafts" },
   { path: "/expenses", label: "Expenses" },
   { path: "/menu", label: "Menu" },
+  { path: "/categories", label: "Categories" },
   { path: "/digital-menu", label: "Digital Menu" },
   { path: "/reports", label: "Reports" },
   { path: "/users", label: "Users" },
@@ -369,6 +381,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     "/sale-drafts",
     "/expenses",
     "/menu",
+    "/categories",
     "/digital-menu",
     "/reports",
     "/branches",

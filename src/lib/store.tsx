@@ -12,6 +12,7 @@ import {
 import type {
   Addon,
   Branch,
+  Category,
   CartLine,
   DiscountMode,
   Expense,
@@ -28,6 +29,7 @@ import type {
 import {
   ALL_PATHS,
   BRANCHES,
+  DEFAULT_CATEGORIES,
   DEFAULT_PAYMENT_METHODS,
   DEFAULT_ROLE_PERMISSIONS,
   DEFAULT_SETTINGS,
@@ -71,6 +73,7 @@ const KEYS = {
   storeName: "pos.storeName",
   rolePermissions: "pos.rolePermissions",
   toppings: "pos.toppings",
+  categories: "pos.categories",
   knownPaths: "pos.knownPaths",
   paymentMethods: "pos.paymentMethods",
 };
@@ -131,6 +134,11 @@ type Store = {
 
   saveProduct: (p: Product) => void;
   deleteProduct: (id: string) => void;
+  categories: Category[];
+  saveCategory: (c: Category) => void;
+  /** Refused while any product still sits in it; returns what blocked it. */
+  deleteCategory: (id: string) => { ok: boolean; inUse: number };
+  categoryById: (id: string) => Category | undefined;
   toppings: Addon[];
   saveTopping: (a: Addon) => void;
   deleteTopping: (id: string) => void;
@@ -241,6 +249,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [toppings, setToppings] = useState<Addon[]>(() =>
     onClient(TOPPINGS, () => read<Addon[]>(KEYS.toppings, TOPPINGS)),
   );
+  const [categories, setCategories] = useState<Category[]>(() =>
+    onClient(DEFAULT_CATEGORIES, () =>
+      read<Category[]>(KEYS.categories, DEFAULT_CATEGORIES),
+    ),
+  );
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(() =>
     onClient(DEFAULT_PAYMENT_METHODS, () => {
       const stored = read<PaymentMethod[] | null>(KEYS.paymentMethods, null);
@@ -273,6 +286,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (ready) localStorage.setItem(KEYS.toppings, JSON.stringify(toppings));
   }, [toppings, ready]);
+  useEffect(() => {
+    if (ready)
+      localStorage.setItem(KEYS.categories, JSON.stringify(categories));
+  }, [categories, ready]);
   useEffect(() => {
     if (ready) localStorage.setItem(KEYS.orders, JSON.stringify(orders));
   }, [orders, ready]);
@@ -490,6 +507,34 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const saveCategory = useCallback((c: Category) => {
+    setCategories((prev) =>
+      prev.some((x) => x.id === c.id)
+        ? prev.map((x) => (x.id === c.id ? c : x))
+        : [...prev, c],
+    );
+  }, []);
+
+  /**
+   * A category is only removed once it is empty. Deleting one with drinks in it
+   * would leave them pointing at a section that no longer exists, so they would
+   * vanish from every filter and from the digital menu.
+   */
+  const deleteCategory = useCallback(
+    (id: string) => {
+      const inUse = products.filter((p) => p.category === id).length;
+      if (inUse > 0) return { ok: false, inUse };
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      return { ok: true, inUse: 0 };
+    },
+    [products],
+  );
+
+  const categoryById = useCallback(
+    (id: string) => categories.find((c) => c.id === id),
+    [categories],
+  );
+
   const saveTopping = useCallback((a: Addon) => {
     setToppings((prev) =>
       prev.some((x) => x.id === a.id)
@@ -575,6 +620,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     canAccess,
     saveProduct,
     deleteProduct,
+    categories,
+    saveCategory,
+    deleteCategory,
+    categoryById,
     toppings,
     saveTopping,
     deleteTopping,

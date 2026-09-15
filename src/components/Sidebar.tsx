@@ -21,6 +21,7 @@ import {
   MonitorIcon,
   OrdersIcon,
   PanelIcon,
+  ProductsIcon,
   SettingsIcon,
   UsersIcon,
 } from "./icons";
@@ -30,6 +31,7 @@ const NAV = [
   { href: "/dashboard", labelKey: "nav.dashboard", Icon: GridIcon },
   { href: "/orders", labelKey: "nav.orders", Icon: OrdersIcon },
   { href: "/menu", labelKey: "nav.menu", Icon: MenuListIcon },
+  { href: "/categories", labelKey: "nav.categories", Icon: ProductsIcon },
   { href: "/digital-menu", labelKey: "nav.digitalMenu", Icon: EyeIcon },
   { href: "/reports", labelKey: "nav.reports", Icon: ChartIcon },
   { href: "/users", labelKey: "nav.users", Icon: UsersIcon },

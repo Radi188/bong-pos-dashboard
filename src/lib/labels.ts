@@ -8,10 +8,24 @@ import type { Category, Role } from "./types";
  */
 export const roleKey = (role: Role) => `role.${role}` as TranslationKey;
 
-export const roleBlurbKey = (role: Role) => `role.${role}.blurb` as TranslationKey;
+export const roleBlurbKey = (role: Role) =>
+  `role.${role}.blurb` as TranslationKey;
 
-export const categoryKey = (category: Category | string) =>
+export const categoryKey = (category: string) =>
   `category.${category}` as TranslationKey;
+
+/**
+ * Built-in sections are translated; anything the shop created (or renamed) is
+ * shown exactly as typed, since there is no dictionary entry for it.
+ */
+export const categoryLabel = (
+  c: Category | undefined,
+  t: (k: TranslationKey) => string,
+  fallbackId?: string,
+) => {
+  if (!c) return fallbackId ?? "";
+  return c.builtIn ? t(categoryKey(c.id)) : c.name;
+};
 
 /** Screen names shown in the permissions matrix; keyed by route. */
 const PATH_KEYS: Record<string, TranslationKey> = {
@@ -28,4 +42,5 @@ const PATH_KEYS: Record<string, TranslationKey> = {
   "/settings": "nav.settings",
 };
 
-export const pathKey = (path: string): TranslationKey => PATH_KEYS[path] ?? "nav.settings";
+export const pathKey = (path: string): TranslationKey =>
+  PATH_KEYS[path] ?? "nav.settings";

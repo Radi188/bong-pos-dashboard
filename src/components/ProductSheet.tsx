@@ -14,7 +14,7 @@ import {
 } from "@/lib/types";
 import { isDiscounted, priceFrom, unitPrice, useStore } from "@/lib/store";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
-import { categoryKey } from "@/lib/labels";
+import { categoryLabel } from "@/lib/labels";
 import { currency } from "@/lib/format";
 import { CloseIcon, CupIcon, MinusIcon, PlusIcon } from "./icons";
 
@@ -28,7 +28,8 @@ export default function ProductSheet({
   line?: CartLine;
   onClose: () => void;
 }) {
-  const { addLine, updateLine, removeLine, toppingsFor } = useStore();
+  const { addLine, updateLine, removeLine, toppingsFor, categoryById } =
+    useStore();
   // Only the toppings this drink offers, resolved live so a price edit in the
   // library reaches the till without touching the product.
   const offered = toppingsFor(product);
@@ -203,7 +204,11 @@ export default function ProductSheet({
 
           {offered.length > 0 && (
             <Group
-              label={t(categoryKey(product.category))}
+              label={categoryLabel(
+                categoryById(product.category),
+                t,
+                product.category,
+              )}
               badge={t("common.optional")}
             >
               <ul className="space-y-2.5">

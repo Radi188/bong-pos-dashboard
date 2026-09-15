@@ -31,8 +31,16 @@ export default function PosTopbar({
 
       {/* Moved out of the sidebar */}
       <nav className="flex shrink-0 items-center gap-2">
-        <HeaderLink href="/sale-drafts" label={t("nav.drafts")} Icon={DraftIcon} />
-        <HeaderLink href="/expenses" label={t("nav.expenses")} Icon={ReceiptIcon} />
+        <HeaderLink
+          href="/sale-drafts"
+          label={t("nav.drafts")}
+          Icon={DraftIcon}
+        />
+        <HeaderLink
+          href="/expenses"
+          label={t("nav.expenses")}
+          Icon={ReceiptIcon}
+        />
       </nav>
 
       <ShiftControls />

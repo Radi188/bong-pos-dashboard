@@ -44,6 +44,8 @@ export const en = {
   "nav.dashboard": "Dashboard",
   "nav.orders": "Orders",
   "nav.menu": "Menu",
+  "nav.digitalMenu": "Digital Menu",
+  "digitalMenu.subtitle": "{shown} items published · {hidden} hidden",
   "nav.reports": "Reports",
   "nav.users": "Users",
   "nav.branches": "Branches",
@@ -80,7 +82,6 @@ export const en = {
   "pos.searchMenu": "Search menu...",
   "pos.noMatch": "Nothing on the menu matches",
   "pos.noMatchHint": "Try another search or category.",
-  "pos.outOfStock": "Out of stock",
   "pos.from": "from",
   "pos.price": "price",
 
@@ -128,7 +129,8 @@ export const en = {
   "pay.amountDue": "Amount due",
   "pay.cashReceived": "Cash received",
   "pay.change": "Change",
-  "pay.terminalHint": "Confirm once the {method} transaction is approved on the terminal.",
+  "pay.terminalHint":
+    "Confirm once the {method} transaction is approved on the terminal.",
   "pay.charge": "Charge {amount}",
   "pay.insufficient": "Insufficient cash",
   "pay.complete": "Payment complete",
@@ -145,17 +147,21 @@ export const en = {
   // ── Open till ───────────────────────────────────────────────────────────
   "till.title": "Open till",
   "till.cashier": "Cashier",
-  "till.hint": "Count the cash in the drawer and enter the opening float for each currency.",
+  "till.hint":
+    "Count the cash in the drawer and enter the opening float for each currency.",
   "till.usd": "US Dollar",
   "till.riel": "Riel",
   "till.openingFloat": "Opening float",
   "till.rate": "1 USD = {rate} ៛",
   "till.openShift": "Open shift",
-  "till.requiredForOrder": "Open a shift before adding {product} to the cart — sales are recorded against the open till.",
-  "till.requiredForCheckout": "Open a shift before taking payment — sales are recorded against the open till.",
+  "till.requiredForOrder":
+    "Open a shift before adding {product} to the cart — sales are recorded against the open till.",
+  "till.requiredForCheckout":
+    "Open a shift before taking payment — sales are recorded against the open till.",
   "till.closeTitle": "Close till",
   "till.since": "since {time}",
-  "till.closeHint": "Count the cash in the drawer and enter what is actually there. We compare it with what the shift should hold.",
+  "till.closeHint":
+    "Count the cash in the drawer and enter what is actually there. We compare it with what the shift should hold.",
   "till.cashSales": "Cash sales",
   "till.cashOut": "Expenses paid from till",
   "till.expected": "Expected in till",
@@ -202,7 +208,8 @@ export const en = {
   "auth.brandMulti": "Multi",
   "auth.brandMultiSub": "branch",
   "login.headline": "Run the whole cafe from one screen.",
-  "login.blurb": "Take orders, split payments across Cash, KHQR and delivery apps, track every shift and close the till with one tap.",
+  "login.blurb":
+    "Take orders, split payments across Cash, KHQR and delivery apps, track every shift and close the till with one tap.",
   "login.welcome": "Welcome back",
   "login.subtitle": "Sign in to open your terminal.",
   "login.emailPlaceholder": "you@cafe.com",
@@ -214,13 +221,15 @@ export const en = {
   "login.newHere": "New here?",
   "login.registerLink": "Register your store",
   "register.headline": "Set up your store in two minutes.",
-  "register.blurb": "Create the owner account, add your first branch, and start selling. More branches can be added any time from the Branches screen.",
+  "register.blurb":
+    "Create the owner account, add your first branch, and start selling. More branches can be added any time from the Branches screen.",
   "register.stepStore": "Store",
   "register.stepBranch": "Branch",
   "register.titleStore": "Register your store",
   "register.titleBranch": "Add your first branch",
   "register.subtitleStore": "This account becomes the owner of the store.",
-  "register.subtitleBranch": "Every sale, shift and expense is recorded against a branch.",
+  "register.subtitleBranch":
+    "Every sale, shift and expense is recorded against a branch.",
   "register.storeName": "Store name",
   "register.yourName": "Your name",
   "register.passwordHint": "At least 6 characters",
@@ -244,7 +253,8 @@ export const en = {
   "orders.subtitle": "{count} completed transactions",
   "orders.searchPlaceholder": "Search orders...",
   "orders.none": "No orders yet",
-  "orders.noneHint": "Sales completed on the POS screen appear here with their receipt.",
+  "orders.noneHint":
+    "Sales completed on the POS screen appear here with their receipt.",
   "orders.colOrder": "Order",
   "orders.colTime": "Time",
   "orders.colCashier": "Cashier",
@@ -257,13 +267,15 @@ export const en = {
   "expenses.subtitle": "{amount} recorded today",
   "expenses.new": "New expense",
   "expenses.none": "No expenses recorded",
-  "expenses.noneHint": "Petty cash spent during a shift — ice, delivery, supplies — is logged here.",
+  "expenses.noneHint":
+    "Petty cash spent during a shift — ice, delivery, supplies — is logged here.",
   "expenses.colNote": "Note",
   "expenses.colBranch": "Branch",
   "expenses.colRecorded": "Recorded",
   "expenses.colAmount": "Amount",
   "drafts.subtitle": "Parked orders waiting to be settled",
-  "drafts.message": "Park an order from the POS screen and it will wait here until you pick it back up.",
+  "drafts.message":
+    "Park an order from the POS screen and it will wait here until you pick it back up.",
 
   // ── Dashboard ───────────────────────────────────────────────────────────
   "dash.revenue": "Today's Revenue",
@@ -278,7 +290,8 @@ export const en = {
   "dash.noSales": "No sales recorded yet.",
   "dash.sold": "{qty} sold",
   "dash.recent": "Recent Orders",
-  "dash.recentEmpty": "Completed sales will appear here as soon as you take one.",
+  "dash.recentEmpty":
+    "Completed sales will appear here as soon as you take one.",
   "dash.colOrderId": "Order ID",
   "dash.completed": "Completed",
 
@@ -293,25 +306,30 @@ export const en = {
   "settings.printLogo": "Print logo on receipt",
   "settings.printLogoDesc": "Show the cafe logo at the top of printed receipts",
   "settings.shiftReport": "Shift Report",
-  "settings.shiftReportDesc": "The cash-up report printed when a shift is closed.",
+  "settings.shiftReportDesc":
+    "The cash-up report printed when a shift is closed.",
   "settings.autoPrint": "Auto print",
   "settings.autoPrintDesc": "Print the cash-up report when a shift is closed",
   "settings.manual": "Manual",
   "settings.manualDesc": "Print the report with a button on the close screen",
   "settings.printers": "Printers",
-  "settings.printersDesc": "Connect a receipt printer and a label printer for cup stickers.",
+  "settings.printersDesc":
+    "Connect a receipt printer and a label printer for cup stickers.",
   "settings.unnamedPrinter": "Unnamed printer",
   "settings.notConnected": "Not connected",
   "settings.copies": "{count} copies",
   "settings.on": "On",
   "settings.off": "Off",
   "settings.currency": "Currency",
-  "settings.currencyDesc": "The Riel rate used for the till float, change and receipt totals.",
+  "settings.currencyDesc":
+    "The Riel rate used for the till float, change and receipt totals.",
   "settings.exchangeRate": "Exchange rate",
   "settings.oneUsd": "1 USD =",
-  "settings.rateError": "Enter a rate above zero, or Riel totals cannot be worked out.",
+  "settings.rateError":
+    "Enter a rate above zero, or Riel totals cannot be worked out.",
   "settings.enabledTenders": "Enabled tenders",
-  "settings.tendersDesc": "Tenders offered at checkout. Manage them on the Payment Methods screen.",
+  "settings.tendersDesc":
+    "Tenders offered at checkout. Manage them on the Payment Methods screen.",
   "settings.noneEnabled": "None enabled",
   "settings.manage": "Manage",
 
@@ -323,9 +341,11 @@ export const en = {
   "branches.tileRevenue": "Revenue today, all branches",
   "branches.noAddress": "No address on file",
   "branches.logo": "Branch logo",
-  "branches.logoHint": "Square PNG or JPG, under 2 MB. Shown on the branch card.",
+  "branches.logoHint":
+    "Square PNG or JPG, under 2 MB. Shown on the branch card.",
   "branches.mapUrl": "Google Maps location",
-  "branches.mapHint": "Paste a Google Maps share link, or coordinates like 11.5564, 104.9282.",
+  "branches.mapHint":
+    "Paste a Google Maps share link, or coordinates like 11.5564, 104.9282.",
   "branches.openMap": "Open in Maps",
   "branches.metricOrders": "Orders",
   "branches.metricToday": "Today",
@@ -337,8 +357,10 @@ export const en = {
   "branches.add": "Add branch",
   "error.lastBranch": "The store needs at least one branch.",
   "error.branchInUse": "Switch to another branch before removing this one.",
-  "error.branchHasSales": "This branch has recorded sales and cannot be removed.",
-  "error.methodHasSales": "This method has recorded sales and cannot be removed.",
+  "error.branchHasSales":
+    "This branch has recorded sales and cannot be removed.",
+  "error.methodHasSales":
+    "This method has recorded sales and cannot be removed.",
   "error.lastMethod": "Keep at least one method enabled.",
 
   // ── Menu ────────────────────────────────────────────────────────────────
@@ -346,16 +368,12 @@ export const en = {
   "menu.newItem": "New item",
   "menu.tileItems": "Items on the menu",
   "menu.tileAvgPrice": "Average price",
-  "menu.tileLowStock": "Low stock (≤ {threshold})",
-  "menu.tileOutOfStock": "Out of stock",
   "menu.gridView": "Grid view",
   "menu.listView": "List view",
   "menu.delete": "Delete {name}",
   "menu.sizeCount": "{count} sizes",
-  "menu.stockLeft": "{count} left",
   "menu.editItem": "Edit item",
   "menu.sku": "SKU",
-  "menu.stock": "Stock",
   "menu.category": "Category",
   "menu.sizesPrices": "Sizes & prices",
   "menu.sizePlaceholder": "Size",
@@ -364,7 +382,29 @@ export const en = {
   "menu.colItem": "Item",
   "menu.colSizes": "Sizes",
   "menu.colPrice": "Price",
-  "menu.colStock": "Stock",
+  "menu.colDigitalMenu": "Digital menu",
+  "menu.onDigitalMenu": "Show on digital menu",
+  "menu.onDigitalMenuBlurb":
+    "Customers see this item on the QR menu. Staff can still ring it up.",
+  "menu.hiddenBadge": "Hidden",
+  "menu.toggleDigitalMenu": "Show {name} on the digital menu",
+  "menu.tileOnMenu": "On digital menu",
+  "menu.listPrice": "Price",
+  "menu.salePrice": "Sale",
+  "menu.salePlaceholder": "—",
+  "menu.saleHint":
+    "Sale price must be lower than the price. Leave blank for no discount.",
+  "menu.saleTooHigh": "Sale price must be lower than the price ({sizes}).",
+  "menu.previewView": "Digital menu preview",
+  "menu.template": "Template",
+  "menu.previewNote":
+    "This is how customers see your menu. Hidden items are left out.",
+  "menu.previewEmpty": "No items are shown on the digital menu yet.",
+  "menu.tpl.classic": "Classic",
+  "menu.tpl.board": "Chalkboard",
+  "menu.tpl.cards": "Cards",
+  "menu.was": "Was {price}",
+  "menu.percentOff": "-{percent}%",
   "menu.noneTitle": "No items match",
   "menu.noneHint": "Try another search or category.",
 
@@ -394,12 +434,14 @@ export const en = {
   "tenders.subtitle": "{enabled} of {total} available at checkout",
   "tenders.add": "Add method",
   "tenders.heading": "Tenders",
-  "tenders.blurb": "Switch a tender off to hide it from the payment grid on the register. Takings shown are for today.",
+  "tenders.blurb":
+    "Switch a tender off to hide it from the payment grid on the register. Takings shown are for today.",
   "tenders.noDescription": "No description",
   "tenders.ordersToday": "{count} orders today",
   "tenders.remove": "Remove {name}",
   "tenders.toggleLabel": "{name} enabled",
-  "tenders.footnote": "Cash is the only tender that asks for an amount tendered and works out change. The others are recorded as paid in full once you confirm the transaction on the provider's own terminal or app.",
+  "tenders.footnote":
+    "Cash is the only tender that asks for an amount tendered and works out change. The others are recorded as paid in full once you confirm the transaction on the provider's own terminal or app.",
   "tenders.editTitle": "Edit method",
   "tenders.addTitle": "Add payment method",
   "tenders.logo": "Logo",
@@ -415,7 +457,8 @@ export const en = {
   "tenders.available": "Available at checkout",
   "tenders.availableBlurb": "Shows in the register payment grid",
   "tenders.addSubmit": "Add method",
-  "error.keepOneEnabled": "Keep at least one method enabled — the register needs a way to take money.",
+  "error.keepOneEnabled":
+    "Keep at least one method enabled — the register needs a way to take money.",
   "error.notAnImage": "That file is not an image.",
   "error.imageTooBig": "Images must be smaller than 2 MB.",
   "error.imageUnreadable": "Could not read that file.",
@@ -459,5 +502,6 @@ export const en = {
   "reports.colItem": "Item",
   "reports.avgPerDay": "Avg / day:",
   "reports.bestDay": "Best day:",
-  "reports.shiftsEmpty": "Shift history is not recorded yet — only the open shift is stored. Closing a shift needs to write a cash-up record before this report can be built.",
+  "reports.shiftsEmpty":
+    "Shift history is not recorded yet — only the open shift is stored. Closing a shift needs to write a cash-up record before this report can be built.",
 } as const;

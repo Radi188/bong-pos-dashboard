@@ -40,6 +40,8 @@ export const km: Dictionary = {
   "nav.dashboard": "ផ្ទាំងគ្រប់គ្រង",
   "nav.orders": "ការបញ្ជាទិញ",
   "nav.menu": "ម៉ឺនុយ",
+  "nav.digitalMenu": "ម៉ឺនុយឌីជីថល",
+  "digitalMenu.subtitle": "បង្ហាញ {shown} · លាក់ {hidden}",
   "nav.reports": "របាយការណ៍",
   "nav.users": "អ្នកប្រើប្រាស់",
   "nav.branches": "សាខា",
@@ -76,7 +78,6 @@ export const km: Dictionary = {
   "pos.searchMenu": "ស្វែងរកម៉ឺនុយ...",
   "pos.noMatch": "គ្មានទំនិញត្រូវនឹងការស្វែងរក",
   "pos.noMatchHint": "សាកល្បងស្វែងរក ឬប្រភេទផ្សេង។",
-  "pos.outOfStock": "អស់ស្តុក",
   "pos.from": "ចាប់ពី",
   "pos.price": "តម្លៃ",
 
@@ -124,7 +125,8 @@ export const km: Dictionary = {
   "pay.amountDue": "ចំនួនត្រូវបង់",
   "pay.cashReceived": "សាច់ប្រាក់ទទួលបាន",
   "pay.change": "ប្រាក់អាប់",
-  "pay.terminalHint": "សូមបញ្ជាក់នៅពេលប្រតិបត្តិការ {method} ត្រូវបានអនុម័តលើម៉ាស៊ីន។",
+  "pay.terminalHint":
+    "សូមបញ្ជាក់នៅពេលប្រតិបត្តិការ {method} ត្រូវបានអនុម័តលើម៉ាស៊ីន។",
   "pay.charge": "គិតប្រាក់ {amount}",
   "pay.insufficient": "សាច់ប្រាក់មិនគ្រប់គ្រាន់",
   "pay.complete": "ការទូទាត់បានសម្រេច",
@@ -141,17 +143,21 @@ export const km: Dictionary = {
   // ── Open till ───────────────────────────────────────────────────────────
   "till.title": "បើកថត",
   "till.cashier": "អ្នកគិតលុយ",
-  "till.hint": "សូមរាប់សាច់ប្រាក់ក្នុងថត ហើយបញ្ចូលប្រាក់ដើមសម្រាប់រូបិយប័ណ្ណនីមួយៗ។",
+  "till.hint":
+    "សូមរាប់សាច់ប្រាក់ក្នុងថត ហើយបញ្ចូលប្រាក់ដើមសម្រាប់រូបិយប័ណ្ណនីមួយៗ។",
   "till.usd": "ដុល្លារអាមេរិក",
   "till.riel": "រៀល",
   "till.openingFloat": "ប្រាក់ដើម",
   "till.rate": "1 ដុល្លារ = {rate} ៛",
   "till.openShift": "បើកវេន",
-  "till.requiredForOrder": "សូមបើកវេនជាមុនសិន មុនពេលបញ្ចូល {product} ទៅកន្ត្រក — ការលក់ត្រូវបានកត់ត្រាតាមថតដែលបើក។",
-  "till.requiredForCheckout": "សូមបើកវេនជាមុនសិន មុនពេលទទួលការទូទាត់ — ការលក់ត្រូវបានកត់ត្រាតាមថតដែលបើក។",
+  "till.requiredForOrder":
+    "សូមបើកវេនជាមុនសិន មុនពេលបញ្ចូល {product} ទៅកន្ត្រក — ការលក់ត្រូវបានកត់ត្រាតាមថតដែលបើក។",
+  "till.requiredForCheckout":
+    "សូមបើកវេនជាមុនសិន មុនពេលទទួលការទូទាត់ — ការលក់ត្រូវបានកត់ត្រាតាមថតដែលបើក។",
   "till.closeTitle": "បិទថត",
   "till.since": "ចាប់ពី {time}",
-  "till.closeHint": "សូមរាប់សាច់ប្រាក់ក្នុងថត ហើយបញ្ចូលចំនួនពិតដែលមាន។ ប្រព័ន្ធនឹងប្រៀបធៀបនឹងចំនួនដែលគួរតែមាន។",
+  "till.closeHint":
+    "សូមរាប់សាច់ប្រាក់ក្នុងថត ហើយបញ្ចូលចំនួនពិតដែលមាន។ ប្រព័ន្ធនឹងប្រៀបធៀបនឹងចំនួនដែលគួរតែមាន។",
   "till.cashSales": "លក់ជាសាច់ប្រាក់",
   "till.cashOut": "ចំណាយចេញពីថត",
   "till.expected": "ចំនួនគួរតែមាន",
@@ -182,7 +188,8 @@ export const km: Dictionary = {
   "printer.customWidth": "ទទឹងកំណត់ដោយខ្លួនឯង (មម)",
   "printer.customHeight": "កម្ពស់កំណត់ដោយខ្លួនឯង (មម)",
   "printer.perItem": "ស្លាកមួយសម្រាប់ភេសជ្ជៈមួយ",
-  "printer.perItemBlurb": "បើបិទ នឹងបោះពុម្ពស្លាកតែមួយសម្រាប់ការបញ្ជាទិញទាំងមូល",
+  "printer.perItemBlurb":
+    "បើបិទ នឹងបោះពុម្ពស្លាកតែមួយសម្រាប់ការបញ្ជាទិញទាំងមូល",
   "printer.testSent": "បានផ្ញើសាកល្បងទៅម៉ាស៊ីនបោះពុម្ព",
   "printer.sendTest": "ផ្ញើការបោះពុម្ពសាកល្បង",
   "printer.save": "រក្សាទុកម៉ាស៊ីនបោះពុម្ព",
@@ -198,7 +205,8 @@ export const km: Dictionary = {
   "auth.brandMulti": "ច្រើន",
   "auth.brandMultiSub": "សាខា",
   "login.headline": "គ្រប់គ្រងហាងកាហ្វេទាំងមូលពីអេក្រង់តែមួយ។",
-  "login.blurb": "ទទួលការបញ្ជាទិញ បែងចែកការទូទាត់តាមសាច់ប្រាក់ KHQR និងកម្មវិធីដឹកជញ្ជូន តាមដានគ្រប់វេន និងបិទថតដោយចុចតែម្តង។",
+  "login.blurb":
+    "ទទួលការបញ្ជាទិញ បែងចែកការទូទាត់តាមសាច់ប្រាក់ KHQR និងកម្មវិធីដឹកជញ្ជូន តាមដានគ្រប់វេន និងបិទថតដោយចុចតែម្តង។",
   "login.welcome": "សូមស្វាគមន៍ការត្រឡប់មកវិញ",
   "login.subtitle": "ចូលគណនីដើម្បីបើកម៉ាស៊ីនលក់របស់អ្នក។",
   "login.emailPlaceholder": "you@cafe.com",
@@ -210,7 +218,8 @@ export const km: Dictionary = {
   "login.newHere": "ទើបមកដល់មែនទេ?",
   "login.registerLink": "ចុះឈ្មោះហាងរបស់អ្នក",
   "register.headline": "រៀបចំហាងរបស់អ្នកក្នុងរយៈពេលពីរនាទី។",
-  "register.blurb": "បង្កើតគណនីម្ចាស់ហាង បន្ថែមសាខាដំបូង ហើយចាប់ផ្តើមលក់។ សាខាបន្ថែមអាចបញ្ចូលបានគ្រប់ពេលពីទំព័រសាខា។",
+  "register.blurb":
+    "បង្កើតគណនីម្ចាស់ហាង បន្ថែមសាខាដំបូង ហើយចាប់ផ្តើមលក់។ សាខាបន្ថែមអាចបញ្ចូលបានគ្រប់ពេលពីទំព័រសាខា។",
   "register.stepStore": "ហាង",
   "register.stepBranch": "សាខា",
   "register.titleStore": "ចុះឈ្មោះហាងរបស់អ្នក",
@@ -240,7 +249,8 @@ export const km: Dictionary = {
   "orders.subtitle": "ប្រតិបត្តិការបានបញ្ចប់ {count}",
   "orders.searchPlaceholder": "ស្វែងរកការបញ្ជាទិញ...",
   "orders.none": "មិនទាន់មានការបញ្ជាទិញទេ",
-  "orders.noneHint": "ការលក់ដែលបានបញ្ចប់នៅលើអេក្រង់លក់ នឹងបង្ហាញនៅទីនេះ ជាមួយវិក្កយបត្ររបស់វា។",
+  "orders.noneHint":
+    "ការលក់ដែលបានបញ្ចប់នៅលើអេក្រង់លក់ នឹងបង្ហាញនៅទីនេះ ជាមួយវិក្កយបត្ររបស់វា។",
   "orders.colOrder": "វិក្កយបត្រ",
   "orders.colTime": "ពេលវេលា",
   "orders.colCashier": "អ្នកគិតលុយ",
@@ -253,13 +263,15 @@ export const km: Dictionary = {
   "expenses.subtitle": "បានកត់ត្រា {amount} ថ្ងៃនេះ",
   "expenses.new": "ចំណាយថ្មី",
   "expenses.none": "មិនទាន់មានការកត់ត្រាចំណាយទេ",
-  "expenses.noneHint": "សាច់ប្រាក់ចំណាយតូចតាចក្នុងវេន ដូចជាទឹកកក ការដឹកជញ្ជូន សម្ភារៈ ត្រូវបានកត់ត្រានៅទីនេះ។",
+  "expenses.noneHint":
+    "សាច់ប្រាក់ចំណាយតូចតាចក្នុងវេន ដូចជាទឹកកក ការដឹកជញ្ជូន សម្ភារៈ ត្រូវបានកត់ត្រានៅទីនេះ។",
   "expenses.colNote": "កំណត់សម្គាល់",
   "expenses.colBranch": "សាខា",
   "expenses.colRecorded": "កាលបរិច្ឆេទកត់ត្រា",
   "expenses.colAmount": "ចំនួនទឹកប្រាក់",
   "drafts.subtitle": "ការបញ្ជាទិញដែលផ្អាកទុក រង់ចាំការទូទាត់",
-  "drafts.message": "ផ្អាកការបញ្ជាទិញពីអេក្រង់លក់ នោះវានឹងរង់ចាំនៅទីនេះរហូតដល់អ្នកយកមកបន្តវិញ។",
+  "drafts.message":
+    "ផ្អាកការបញ្ជាទិញពីអេក្រង់លក់ នោះវានឹងរង់ចាំនៅទីនេះរហូតដល់អ្នកយកមកបន្តវិញ។",
 
   // ── Dashboard ───────────────────────────────────────────────────────────
   "dash.revenue": "ចំណូលថ្ងៃនេះ",
@@ -289,25 +301,30 @@ export const km: Dictionary = {
   "settings.printLogo": "បោះពុម្ពស្លាកសញ្ញាលើវិក្កយបត្រ",
   "settings.printLogoDesc": "បង្ហាញស្លាកសញ្ញាហាងនៅផ្នែកខាងលើវិក្កយបត្រ",
   "settings.shiftReport": "របាយការណ៍វេន",
-  "settings.shiftReportDesc": "របាយការណ៍បិទបញ្ជីសាច់ប្រាក់ ដែលបោះពុម្ពពេលបិទវេន។",
+  "settings.shiftReportDesc":
+    "របាយការណ៍បិទបញ្ជីសាច់ប្រាក់ ដែលបោះពុម្ពពេលបិទវេន។",
   "settings.autoPrint": "បោះពុម្ពស្វ័យប្រវត្តិ",
   "settings.autoPrintDesc": "បោះពុម្ពរបាយការណ៍បិទបញ្ជីពេលបិទវេន",
   "settings.manual": "ដោយដៃ",
   "settings.manualDesc": "បោះពុម្ពរបាយការណ៍តាមប៊ូតុងនៅលើអេក្រង់បិទវេន",
   "settings.printers": "ម៉ាស៊ីនបោះពុម្ព",
-  "settings.printersDesc": "តភ្ជាប់ម៉ាស៊ីនបោះពុម្ពវិក្កយបត្រ និងម៉ាស៊ីនបោះពុម្ពស្លាកសម្រាប់កែវ។",
+  "settings.printersDesc":
+    "តភ្ជាប់ម៉ាស៊ីនបោះពុម្ពវិក្កយបត្រ និងម៉ាស៊ីនបោះពុម្ពស្លាកសម្រាប់កែវ។",
   "settings.unnamedPrinter": "ម៉ាស៊ីនបោះពុម្ពគ្មានឈ្មោះ",
   "settings.notConnected": "មិនបានតភ្ជាប់",
   "settings.copies": "{count} ច្បាប់ចម្លង",
   "settings.on": "បើក",
   "settings.off": "បិទ",
   "settings.currency": "រូបិយប័ណ្ណ",
-  "settings.currencyDesc": "អត្រាប្តូររៀល ប្រើសម្រាប់ប្រាក់ដើម ប្រាក់អាប់ និងសរុបលើវិក្កយបត្រ។",
+  "settings.currencyDesc":
+    "អត្រាប្តូររៀល ប្រើសម្រាប់ប្រាក់ដើម ប្រាក់អាប់ និងសរុបលើវិក្កយបត្រ។",
   "settings.exchangeRate": "អត្រាប្តូរប្រាក់",
   "settings.oneUsd": "1 ដុល្លារ =",
-  "settings.rateError": "សូមបញ្ចូលអត្រាធំជាងសូន្យ បើមិនដូច្នេះទេ មិនអាចគណនាចំនួនរៀលបានទេ។",
+  "settings.rateError":
+    "សូមបញ្ចូលអត្រាធំជាងសូន្យ បើមិនដូច្នេះទេ មិនអាចគណនាចំនួនរៀលបានទេ។",
   "settings.enabledTenders": "វិធីទូទាត់ដែលបានបើក",
-  "settings.tendersDesc": "វិធីទូទាត់ដែលផ្តល់ជូនពេលគិតលុយ។ គ្រប់គ្រងវានៅទំព័រវិធីទូទាត់។",
+  "settings.tendersDesc":
+    "វិធីទូទាត់ដែលផ្តល់ជូនពេលគិតលុយ។ គ្រប់គ្រងវានៅទំព័រវិធីទូទាត់។",
   "settings.noneEnabled": "គ្មានវិធីទូទាត់បានបើក",
   "settings.manage": "គ្រប់គ្រង",
 
@@ -321,7 +338,8 @@ export const km: Dictionary = {
   "branches.logo": "ស្លាកសញ្ញាសាខា",
   "branches.logoHint": "រូបភាពការេ PNG ឬ JPG តូចជាង 2 MB។ បង្ហាញលើកាតសាខា។",
   "branches.mapUrl": "ទីតាំង Google Maps",
-  "branches.mapHint": "បិទភ្ជាប់តំណ Google Maps ឬកូអរដោនេដូចជា 11.5564, 104.9282។",
+  "branches.mapHint":
+    "បិទភ្ជាប់តំណ Google Maps ឬកូអរដោនេដូចជា 11.5564, 104.9282។",
   "branches.openMap": "បើកក្នុងផែនទី",
   "branches.metricOrders": "ការបញ្ជាទិញ",
   "branches.metricToday": "ថ្ងៃនេះ",
@@ -333,8 +351,10 @@ export const km: Dictionary = {
   "branches.add": "បន្ថែមសាខា",
   "error.lastBranch": "ហាងត្រូវមានសាខាយ៉ាងតិចមួយ។",
   "error.branchInUse": "សូមប្តូរទៅសាខាផ្សេងជាមុនសិន មុននឹងលុបសាខានេះ។",
-  "error.branchHasSales": "សាខានេះមានការលក់កត់ត្រារួចហើយ ដូច្នេះមិនអាចលុបបានទេ។",
-  "error.methodHasSales": "វិធីទូទាត់នេះមានការលក់កត់ត្រារួចហើយ ដូច្នេះមិនអាចលុបបានទេ។",
+  "error.branchHasSales":
+    "សាខានេះមានការលក់កត់ត្រារួចហើយ ដូច្នេះមិនអាចលុបបានទេ។",
+  "error.methodHasSales":
+    "វិធីទូទាត់នេះមានការលក់កត់ត្រារួចហើយ ដូច្នេះមិនអាចលុបបានទេ។",
   "error.lastMethod": "សូមរក្សាវិធីទូទាត់យ៉ាងតិចមួយឲ្យបើកដំណើរការ។",
 
   // ── Menu ────────────────────────────────────────────────────────────────
@@ -342,16 +362,12 @@ export const km: Dictionary = {
   "menu.newItem": "ទំនិញថ្មី",
   "menu.tileItems": "ទំនិញនៅលើម៉ឺនុយ",
   "menu.tileAvgPrice": "តម្លៃមធ្យម",
-  "menu.tileLowStock": "ស្តុកជិតអស់ (≤ {threshold})",
-  "menu.tileOutOfStock": "អស់ស្តុក",
   "menu.gridView": "មើលជាក្រឡា",
   "menu.listView": "មើលជាបញ្ជី",
   "menu.delete": "លុប {name}",
   "menu.sizeCount": "ទំហំ {count}",
-  "menu.stockLeft": "នៅសល់ {count}",
   "menu.editItem": "កែសម្រួលទំនិញ",
   "menu.sku": "លេខកូដទំនិញ",
-  "menu.stock": "ស្តុក",
   "menu.category": "ប្រភេទ",
   "menu.sizesPrices": "ទំហំ និងតម្លៃ",
   "menu.sizePlaceholder": "ទំហំ",
@@ -360,7 +376,28 @@ export const km: Dictionary = {
   "menu.colItem": "ទំនិញ",
   "menu.colSizes": "ទំហំ",
   "menu.colPrice": "តម្លៃ",
-  "menu.colStock": "ស្តុក",
+  "menu.colDigitalMenu": "ម៉ឺនុយឌីជីថល",
+  "menu.onDigitalMenu": "បង្ហាញលើម៉ឺនុយឌីជីថល",
+  "menu.onDigitalMenuBlurb":
+    "អតិថិជនឃើញទំនិញនេះលើម៉ឺនុយ QR។ បុគ្គលិកនៅតែអាចលក់បាន។",
+  "menu.hiddenBadge": "លាក់",
+  "menu.toggleDigitalMenu": "បង្ហាញ {name} លើម៉ឺនុយឌីជីថល",
+  "menu.tileOnMenu": "នៅលើម៉ឺនុយឌីជីថល",
+  "menu.listPrice": "តម្លៃ",
+  "menu.salePrice": "បញ្ចុះ",
+  "menu.salePlaceholder": "—",
+  "menu.saleHint": "តម្លៃបញ្ចុះត្រូវតែទាបជាងតម្លៃដើម។ ទុកទទេបើមិនបញ្ចុះតម្លៃ។",
+  "menu.saleTooHigh": "តម្លៃបញ្ចុះត្រូវតែទាបជាងតម្លៃដើម ({sizes})។",
+  "menu.previewView": "មើលម៉ឺនុយឌីជីថល",
+  "menu.template": "ទម្រង់",
+  "menu.previewNote":
+    "នេះជារបៀបដែលអតិថិជនឃើញម៉ឺនុយរបស់អ្នក។ ទំនិញដែលលាក់មិនបង្ហាញទេ។",
+  "menu.previewEmpty": "មិនទាន់មានទំនិញបង្ហាញលើម៉ឺនុយឌីជីថលនៅឡើយទេ។",
+  "menu.tpl.classic": "បុរាណ",
+  "menu.tpl.board": "ក្តារខៀន",
+  "menu.tpl.cards": "កាត",
+  "menu.was": "ធ្លាប់ {price}",
+  "menu.percentOff": "-{percent}%",
   "menu.noneTitle": "គ្មានទំនិញត្រូវគ្នា",
   "menu.noneHint": "សាកល្បងស្វែងរក ឬប្រភេទផ្សេង។",
 
@@ -390,12 +427,14 @@ export const km: Dictionary = {
   "tenders.subtitle": "{enabled} ក្នុងចំណោម {total} អាចប្រើពេលគិតលុយ",
   "tenders.add": "បន្ថែមវិធីទូទាត់",
   "tenders.heading": "វិធីទូទាត់",
-  "tenders.blurb": "បិទវិធីទូទាត់ណាមួយ ដើម្បីលាក់វាពីផ្ទាំងទូទាត់នៅម៉ាស៊ីនលក់។ ចំណូលដែលបង្ហាញគឺសម្រាប់ថ្ងៃនេះ។",
+  "tenders.blurb":
+    "បិទវិធីទូទាត់ណាមួយ ដើម្បីលាក់វាពីផ្ទាំងទូទាត់នៅម៉ាស៊ីនលក់។ ចំណូលដែលបង្ហាញគឺសម្រាប់ថ្ងៃនេះ។",
   "tenders.noDescription": "គ្មានការពិពណ៌នា",
   "tenders.ordersToday": "ការបញ្ជាទិញ {count} ថ្ងៃនេះ",
   "tenders.remove": "លុប {name}",
   "tenders.toggleLabel": "បើក {name}",
-  "tenders.footnote": "សាច់ប្រាក់គឺជាវិធីទូទាត់តែមួយគត់ដែលសួររកចំនួនប្រាក់បង់ និងគណនាប្រាក់អាប់។ វិធីផ្សេងទៀតត្រូវបានកត់ត្រាថាបានបង់ពេញ នៅពេលអ្នកបញ្ជាក់ប្រតិបត្តិការនៅលើម៉ាស៊ីន ឬកម្មវិធីរបស់អ្នកផ្តល់សេវា។",
+  "tenders.footnote":
+    "សាច់ប្រាក់គឺជាវិធីទូទាត់តែមួយគត់ដែលសួររកចំនួនប្រាក់បង់ និងគណនាប្រាក់អាប់។ វិធីផ្សេងទៀតត្រូវបានកត់ត្រាថាបានបង់ពេញ នៅពេលអ្នកបញ្ជាក់ប្រតិបត្តិការនៅលើម៉ាស៊ីន ឬកម្មវិធីរបស់អ្នកផ្តល់សេវា។",
   "tenders.editTitle": "កែសម្រួលវិធីទូទាត់",
   "tenders.addTitle": "បន្ថែមវិធីទូទាត់",
   "tenders.logo": "ស្លាកសញ្ញា",
@@ -411,7 +450,8 @@ export const km: Dictionary = {
   "tenders.available": "អាចប្រើពេលគិតលុយ",
   "tenders.availableBlurb": "បង្ហាញនៅផ្ទាំងទូទាត់លើម៉ាស៊ីនលក់",
   "tenders.addSubmit": "បន្ថែមវិធីទូទាត់",
-  "error.keepOneEnabled": "សូមរក្សាវិធីទូទាត់យ៉ាងតិចមួយឲ្យបើក — ម៉ាស៊ីនលក់ត្រូវការមធ្យោបាយទទួលប្រាក់។",
+  "error.keepOneEnabled":
+    "សូមរក្សាវិធីទូទាត់យ៉ាងតិចមួយឲ្យបើក — ម៉ាស៊ីនលក់ត្រូវការមធ្យោបាយទទួលប្រាក់។",
   "error.notAnImage": "ឯកសារនេះមិនមែនជារូបភាពទេ។",
   "error.imageTooBig": "រូបភាពត្រូវតែតូចជាង ២ MB។",
   "error.imageUnreadable": "មិនអាចអានឯកសារនេះបានទេ។",
@@ -455,5 +495,6 @@ export const km: Dictionary = {
   "reports.colItem": "ទំនិញ",
   "reports.avgPerDay": "មធ្យមក្នុងមួយថ្ងៃ៖",
   "reports.bestDay": "ថ្ងៃលក់ដាច់បំផុត៖",
-  "reports.shiftsEmpty": "ប្រវត្តិវេនមិនទាន់ត្រូវបានកត់ត្រាទេ — មានតែវេនដែលកំពុងបើកប៉ុណ្ណោះដែលត្រូវបានរក្សាទុក។ ការបិទវេនត្រូវកត់ត្រាការបិទបញ្ជីសាច់ប្រាក់សិន មុននឹងរបាយការណ៍នេះអាចបង្កើតបាន។",
+  "reports.shiftsEmpty":
+    "ប្រវត្តិវេនមិនទាន់ត្រូវបានកត់ត្រាទេ — មានតែវេនដែលកំពុងបើកប៉ុណ្ណោះដែលត្រូវបានរក្សាទុក។ ការបិទវេនត្រូវកត់ត្រាការបិទបញ្ជីសាច់ប្រាក់សិន មុននឹងរបាយការណ៍នេះអាចបង្កើតបាន។",
 };

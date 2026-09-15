@@ -11,7 +11,14 @@ export type Category = (typeof CATEGORIES)[number];
 export type Variant = {
   id: string;
   label: string;
+  /** List price — what the size costs before any promotion. */
   price: number;
+  /**
+   * Promotional price for this size. When set, it is what the register charges
+   * and the digital menu strikes `price` through beside it. Read it through
+   * `unitPrice` rather than testing the field directly.
+   */
+  salePrice?: number;
 };
 
 export type DiscountMode = "percent" | "amount";
@@ -33,12 +40,17 @@ export type Product = {
   name: string;
   category: Category;
   sku: string;
-  stock: number;
   variants: Variant[];
   /** Optional extras offered with this item, grouped under its category name. */
   addons?: Addon[];
   /** Drinks ask for sugar and ice; food does not. */
   customisable?: boolean;
+  /**
+   * Listed on the customer-facing digital menu. Undefined counts as shown, so
+   * items saved before this flag existed keep appearing — read it through
+   * `showsOnDigitalMenu` rather than testing the field directly.
+   */
+  onDigitalMenu?: boolean;
 };
 
 export type CartLine = {
@@ -80,7 +92,8 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethod[] = [
     id: "cash",
     label: "Cash",
     mark: "$",
-    description: "Notes and coins in the drawer, with change calculated at checkout",
+    description:
+      "Notes and coins in the drawer, with change calculated at checkout",
     enabled: true,
     builtIn: true,
   },
@@ -247,6 +260,10 @@ export type LabelPrinter = {
   perItem: boolean;
 };
 
+/** Layouts the customer-facing digital menu can be rendered in. */
+export const MENU_TEMPLATES = ["classic", "board", "cards"] as const;
+export type MenuTemplate = (typeof MENU_TEMPLATES)[number];
+
 export type Settings = {
   /** USD to KHR rate used for the till float and receipt conversions. */
   khrRate: number;
@@ -255,10 +272,13 @@ export type Settings = {
   shiftReport: ShiftReportMode;
   receiptPrinter: ReceiptPrinter;
   labelPrinter: LabelPrinter;
+  /** Template the digital menu is published in. */
+  menuTemplate: MenuTemplate;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
   khrRate: DEFAULT_KHR_RATE,
+  menuTemplate: "classic",
   receiptAction: "preview",
   printLogo: true,
   shiftReport: "auto",
@@ -310,6 +330,7 @@ export const PERMISSIONS: { path: string; label: string }[] = [
   { path: "/sale-drafts", label: "Sale Drafts" },
   { path: "/expenses", label: "Expenses" },
   { path: "/menu", label: "Menu" },
+  { path: "/digital-menu", label: "Digital Menu" },
   { path: "/reports", label: "Reports" },
   { path: "/users", label: "Users" },
   { path: "/branches", label: "Branches" },
@@ -336,6 +357,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     "/sale-drafts",
     "/expenses",
     "/menu",
+    "/digital-menu",
     "/reports",
     "/branches",
   ],

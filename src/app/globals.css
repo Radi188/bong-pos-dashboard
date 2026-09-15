@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Short laptop screens: the cart list is what matters, so the checkout
+   controls around it give back their padding. */
+@custom-variant short (@media (height < 50rem));
+
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
@@ -30,7 +34,9 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), var(--font-khmer), ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    var(--font-geist-sans), var(--font-khmer), ui-sans-serif, system-ui,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

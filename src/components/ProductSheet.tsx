@@ -12,7 +12,7 @@ import {
   type SugarLevel,
   type Variant,
 } from "@/lib/types";
-import { useStore } from "@/lib/store";
+import { isDiscounted, priceFrom, unitPrice, useStore } from "@/lib/store";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
 import { categoryKey } from "@/lib/labels";
 import { currency } from "@/lib/format";
@@ -33,17 +33,18 @@ export default function ProductSheet({
   const editing = Boolean(line);
 
   const initialVariant =
-    (line && product.variants.find((v) => v.id === line.variantId)) ?? product.variants[0];
+    (line && product.variants.find((v) => v.id === line.variantId)) ??
+    product.variants[0];
 
   const [variant, setVariant] = useState<Variant>(initialVariant);
   const [sugar, setSugar] = useState<SugarLevel>(line?.sugar ?? "100%");
   const [ice, setIce] = useState<IceLevel>(line?.ice ?? "Normal");
   const [addons, setAddons] = useState<Addon[]>(line?.addons ?? []);
   const [priceInput, setPriceInput] = useState(
-    (line?.price ?? initialVariant.price).toFixed(2)
+    (line?.price ?? unitPrice(initialVariant)).toFixed(2),
   );
   const [discountMode, setDiscountMode] = useState<DiscountMode>(
-    line?.discountMode ?? "percent"
+    line?.discountMode ?? "percent",
   );
   const [discountValue, setDiscountValue] = useState(line?.discountValue ?? 0);
   const [note, setNote] = useState(line?.note ?? "");
@@ -57,22 +58,26 @@ export default function ProductSheet({
 
   const chooseVariant = (v: Variant) => {
     setVariant(v);
-    setPriceInput(v.price.toFixed(2));
+    setPriceInput(unitPrice(v).toFixed(2));
   };
 
   const toggleAddon = (a: Addon) =>
     setAddons((prev) =>
-      prev.some((x) => x.id === a.id) ? prev.filter((x) => x.id !== a.id) : [...prev, a]
+      prev.some((x) => x.id === a.id)
+        ? prev.filter((x) => x.id !== a.id)
+        : [...prev, a],
     );
 
   const price = Number(priceInput || 0);
-  const overridden = Math.abs(price - variant.price) > 0.001;
+  const overridden = Math.abs(price - unitPrice(variant)) > 0.001;
 
   const total = useMemo(() => {
     const unit = price + addons.reduce((s, a) => s + a.price, 0);
     const subtotal = unit * qty;
     const raw =
-      discountMode === "amount" ? discountValue : (subtotal * Math.min(discountValue, 100)) / 100;
+      discountMode === "amount"
+        ? discountValue
+        : (subtotal * Math.min(discountValue, 100)) / 100;
     return subtotal - Math.min(subtotal, Math.max(0, raw));
   }, [price, addons, qty, discountMode, discountValue]);
 
@@ -97,7 +102,10 @@ export default function ProductSheet({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
 
       <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/10">
         {/* Header */}
@@ -106,9 +114,11 @@ export default function ProductSheet({
             <CupIcon className="h-9 w-9 text-neutral-300" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-xl font-bold tracking-tight">{product.name}</h2>
+            <h2 className="truncate text-xl font-bold tracking-tight">
+              {product.name}
+            </h2>
             <p className="mt-1 text-[15px] font-medium text-muted">
-              {t("pos.from")} {currency(Math.min(...product.variants.map((v) => v.price)))}
+              {t("pos.from")} {currency(priceFrom(product))}
             </p>
           </div>
           <button
@@ -122,7 +132,11 @@ export default function ProductSheet({
 
         {/* Options */}
         <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-5">
-          <Group label={t("sheet.size")} badge={t("common.required")} tone="required">
+          <Group
+            label={t("sheet.size")}
+            badge={t("common.required")}
+            tone="required"
+          >
             <div
               className="grid gap-2.5"
               style={{
@@ -142,13 +156,20 @@ export default function ProductSheet({
                         : "border-line hover:border-neutral-300",
                     ].join(" ")}
                   >
-                    <span className="block text-[15px] font-bold">{v.label}</span>
+                    <span className="block text-[15px] font-bold">
+                      {v.label}
+                    </span>
                     <span
-                      className={`mt-0.5 block text-sm tabular-nums ${
+                      className={`mt-0.5 flex items-baseline justify-center gap-1.5 text-sm tabular-nums ${
                         active ? "text-neutral-300" : "text-muted"
                       }`}
                     >
-                      {currency(v.price)}
+                      {isDiscounted(v) && (
+                        <span className="text-xs line-through opacity-70">
+                          {currency(v.price)}
+                        </span>
+                      )}
+                      <span>{currency(unitPrice(v))}</span>
                     </span>
                   </button>
                 );
@@ -159,17 +180,29 @@ export default function ProductSheet({
           {product.customisable && (
             <>
               <Group label={t("sheet.sugar")} badge={t("common.optional")}>
-                <Pills options={SUGAR_LEVELS} value={sugar} onChange={setSugar} />
+                <Pills
+                  options={SUGAR_LEVELS}
+                  value={sugar}
+                  onChange={setSugar}
+                />
               </Group>
 
               <Group label={t("sheet.ice")} badge={t("common.optional")}>
-                <Pills options={ICE_LEVELS} value={ice} onChange={setIce} label={(o) => t(`ice.${o}` as TranslationKey)} />
+                <Pills
+                  options={ICE_LEVELS}
+                  value={ice}
+                  onChange={setIce}
+                  label={(o) => t(`ice.${o}` as TranslationKey)}
+                />
               </Group>
             </>
           )}
 
           {product.addons && product.addons.length > 0 && (
-            <Group label={t(categoryKey(product.category))} badge={t("common.optional")}>
+            <Group
+              label={t(categoryKey(product.category))}
+              badge={t("common.optional")}
+            >
               <ul className="space-y-2.5">
                 {product.addons.map((a) => {
                   const checked = addons.some((x) => x.id === a.id);
@@ -179,7 +212,9 @@ export default function ProductSheet({
                         onClick={() => toggleAddon(a)}
                         className={[
                           "flex w-full items-center gap-3.5 rounded-xl border px-4 py-3.5 text-left transition-colors",
-                          checked ? "border-neutral-900" : "border-line hover:border-neutral-300",
+                          checked
+                            ? "border-neutral-900"
+                            : "border-line hover:border-neutral-300",
                         ].join(" ")}
                       >
                         <span
@@ -191,7 +226,15 @@ export default function ProductSheet({
                           ].join(" ")}
                         >
                           {checked && (
-                            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <path d="m5 13 4 4L19 7" />
                             </svg>
                           )}
@@ -210,7 +253,10 @@ export default function ProductSheet({
             </Group>
           )}
 
-          <Group label={t("sheet.priceGroup")} badge={overridden ? t("sheet.customPrice") : t("sheet.menuPrice")}>
+          <Group
+            label={t("sheet.priceGroup")}
+            badge={overridden ? t("sheet.customPrice") : t("sheet.menuPrice")}
+          >
             <div className="relative">
               <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base text-muted">
                 $
@@ -218,7 +264,9 @@ export default function ProductSheet({
               <input
                 inputMode="decimal"
                 value={priceInput}
-                onChange={(e) => setPriceInput(e.target.value.replace(/[^0-9.]/g, ""))}
+                onChange={(e) =>
+                  setPriceInput(e.target.value.replace(/[^0-9.]/g, ""))
+                }
                 className="h-14 w-full rounded-xl border border-line pl-9 pr-4 text-[17px] tabular-nums outline-none transition-colors focus:border-neutral-900"
               />
             </div>
@@ -258,7 +306,9 @@ export default function ProductSheet({
                   inputMode="decimal"
                   value={discountValue || ""}
                   onChange={(e) =>
-                    setDiscountValue(Number(e.target.value.replace(/[^0-9.]/g, "") || 0))
+                    setDiscountValue(
+                      Number(e.target.value.replace(/[^0-9.]/g, "") || 0),
+                    )
                   }
                   placeholder="0"
                   className="h-12 w-full rounded-xl border border-line px-4 pr-10 text-center text-[15px] tabular-nums outline-none transition-colors focus:border-neutral-900"
@@ -303,7 +353,9 @@ export default function ProductSheet({
             >
               <MinusIcon className="h-4 w-4" />
             </button>
-            <span className="w-8 text-center text-base font-semibold tabular-nums">{qty}</span>
+            <span className="w-8 text-center text-base font-semibold tabular-nums">
+              {qty}
+            </span>
             <button
               onClick={() => setQty((q) => q + 1)}
               aria-label={t("sheet.increaseQty")}
@@ -318,7 +370,9 @@ export default function ProductSheet({
             disabled={price <= 0}
             className="flex h-14 flex-1 items-center justify-between rounded-xl bg-neutral-900 px-5 text-base font-semibold text-white transition-opacity hover:opacity-85 disabled:bg-neutral-200 disabled:text-neutral-400"
           >
-            <span>{editing ? t("sheet.updateCart") : t("sheet.addToCart")}</span>
+            <span>
+              {editing ? t("sheet.updateCart") : t("sheet.addToCart")}
+            </span>
             <span className="tabular-nums">{currency(total)}</span>
           </button>
         </div>
@@ -345,7 +399,9 @@ function Group({
         <span
           className={[
             "rounded-md px-2 py-0.5 text-xs font-medium",
-            tone === "required" ? "bg-red-50 text-red-600" : "bg-neutral-100 text-neutral-500",
+            tone === "required"
+              ? "bg-red-50 text-red-600"
+              : "bg-neutral-100 text-neutral-500",
           ].join(" ")}
         >
           {badge}

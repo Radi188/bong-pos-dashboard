@@ -4,12 +4,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
-import type { LabelAction, ReceiptAction, ShiftReportMode } from "@/lib/types";
+import {
+  planById,
+  type LabelAction,
+  type ReceiptAction,
+  type ShiftReportMode,
+} from "@/lib/types";
+import type { TranslationKey } from "@/lib/i18n";
 import PageHeader from "@/components/PageHeader";
 import PrinterDialog from "@/components/PrinterDialog";
+import PlanDialog, { branchAllowance } from "@/components/PlanDialog";
 import {
   BoltIcon,
   BoxIcon,
+  BranchIcon,
   CardIcon,
   CloseIcon,
   ExchangeIcon,
@@ -29,9 +37,18 @@ import {
 } from "@/components/settings-ui";
 
 export default function SettingsPage() {
-  const { settings, updateSettings, branch, paymentMethods } = useStore();
+  const {
+    settings,
+    updateSettings,
+    branch,
+    paymentMethods,
+    plan,
+    branches,
+    branchLimit,
+  } = useStore();
   const { t } = useI18n();
   const [dialog, setDialog] = useState<"receipt" | "label" | null>(null);
+  const [planOpen, setPlanOpen] = useState(false);
 
   const { receiptPrinter: rp, labelPrinter: lp } = settings;
 
@@ -44,6 +61,27 @@ export default function SettingsPage() {
 
       <div className="flex-1 overflow-y-auto bg-surface p-6">
         <div className="mx-auto max-w-3xl space-y-5">
+          <SettingsCard title={t("plan.title")} description={t("plan.blurb")}>
+            <Divider />
+            <SettingRow
+              Icon={BranchIcon}
+              title={t(`plan.${plan}` as TranslationKey)}
+              subtitle={
+                branchLimit === null
+                  ? t("plan.usageUnlimited", { used: branches.length })
+                  : t("plan.usage", {
+                      used: branches.length,
+                      limit: branchLimit,
+                    })
+              }
+              onClick={() => setPlanOpen(true)}
+            >
+              <span className="shrink-0 rounded-xl border border-line px-4 py-2.5 text-sm font-medium">
+                {branchAllowance(planById(plan), t)}
+              </span>
+            </SettingRow>
+          </SettingsCard>
+
           <SettingsCard
             title={t("settings.receipt")}
             description={t("settings.receiptDesc")}
@@ -278,6 +316,7 @@ export default function SettingsPage() {
       {dialog && (
         <PrinterDialog kind={dialog} onClose={() => setDialog(null)} />
       )}
+      {planOpen && <PlanDialog onClose={() => setPlanOpen(false)} />}
     </div>
   );
 }

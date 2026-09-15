@@ -14,7 +14,7 @@ const inputClass =
 
 export default function RegisterPage() {
   const { signUp } = useAuth();
-  const { setStoreName, addBranch, setBranch } = useStore();
+  const { createShop } = useStore();
   const router = useRouter();
 
   const [step, setStep] = useState<1 | 2>(1);
@@ -49,21 +49,18 @@ export default function RegisterPage() {
       setStep(1);
       return;
     }
-    setStoreName(storeName.trim());
-    const created = addBranch({
+    // The shop starts on its own branch alone — the shipped demo branches are
+    // not theirs, and would eat the Starter plan's single-branch allowance.
+    createShop(storeName.trim(), {
       name: branchName.trim(),
       address: address.trim(),
       phone: phone.trim(),
     });
-    setBranch(created.id);
     router.replace("/");
   };
 
   return (
-    <AuthLayout
-      headline={t("register.headline")}
-      blurb={t("register.blurb")}
-    >
+    <AuthLayout headline={t("register.headline")} blurb={t("register.blurb")}>
       <div className="flex items-center gap-3">
         <Step n={1} current={step} label={t("register.stepStore")} />
         <span className="h-px flex-1 bg-line" />
@@ -74,7 +71,9 @@ export default function RegisterPage() {
         {step === 1 ? t("register.titleStore") : t("register.titleBranch")}
       </h1>
       <p className="mt-2 text-[15px] text-muted">
-        {step === 1 ? t("register.subtitleStore") : t("register.subtitleBranch")}
+        {step === 1
+          ? t("register.subtitleStore")
+          : t("register.subtitleBranch")}
       </p>
 
       <form onSubmit={submit} className="mt-8 space-y-4">
@@ -123,7 +122,9 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShow((v) => !v)}
-                  aria-label={show ? t("login.hidePassword") : t("login.showPassword")}
+                  aria-label={
+                    show ? t("login.hidePassword") : t("login.showPassword")
+                  }
                   className={`absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg transition-colors hover:bg-neutral-100 ${
                     show ? "text-neutral-900" : "text-muted"
                   }`}
@@ -205,7 +206,10 @@ export default function RegisterPage() {
 
       <p className="mt-8 text-center text-sm text-muted">
         {t("register.haveAccount")}{" "}
-        <Link href="/login" className="font-medium text-neutral-900 underline underline-offset-2">
+        <Link
+          href="/login"
+          className="font-medium text-neutral-900 underline underline-offset-2"
+        >
           {t("register.signInLink")}
         </Link>
       </p>
@@ -213,7 +217,15 @@ export default function RegisterPage() {
   );
 }
 
-function Step({ n, current, label }: { n: 1 | 2; current: 1 | 2; label: string }) {
+function Step({
+  n,
+  current,
+  label,
+}: {
+  n: 1 | 2;
+  current: 1 | 2;
+  label: string;
+}) {
   const done = current > n;
   const active = current === n;
   return (
@@ -221,17 +233,27 @@ function Step({ n, current, label }: { n: 1 | 2; current: 1 | 2; label: string }
       <span
         className={[
           "grid h-8 w-8 place-items-center rounded-full text-xs font-semibold transition-colors",
-          done || active ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500",
+          done || active
+            ? "bg-neutral-900 text-white"
+            : "bg-neutral-100 text-neutral-500",
         ].join(" ")}
       >
         {done ? <CheckIcon className="h-4 w-4" /> : n}
       </span>
-      <span className={`text-sm font-medium ${active ? "" : "text-muted"}`}>{label}</span>
+      <span className={`text-sm font-medium ${active ? "" : "text-muted"}`}>
+        {label}
+      </span>
     </span>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">

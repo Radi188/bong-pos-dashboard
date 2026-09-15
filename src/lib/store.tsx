@@ -13,6 +13,7 @@ import type {
   Addon,
   Branch,
   Category,
+  PlanId,
   CartLine,
   DiscountMode,
   Expense,
@@ -30,6 +31,8 @@ import {
   ALL_PATHS,
   BRANCHES,
   DEFAULT_CATEGORIES,
+  DEFAULT_PLAN,
+  planById,
   DEFAULT_PAYMENT_METHODS,
   DEFAULT_ROLE_PERMISSIONS,
   DEFAULT_SETTINGS,
@@ -74,6 +77,7 @@ const KEYS = {
   rolePermissions: "pos.rolePermissions",
   toppings: "pos.toppings",
   categories: "pos.categories",
+  plan: "pos.plan",
   knownPaths: "pos.knownPaths",
   paymentMethods: "pos.paymentMethods",
 };
@@ -93,7 +97,15 @@ type Store = {
   branch: Branch;
   branches: Branch[];
   setBranch: (id: string) => void;
-  addBranch: (branch: Omit<Branch, "id">) => Branch;
+  /** Refused once the plan's branch allowance is used up; null means blocked. */
+  addBranch: (branch: Omit<Branch, "id">) => Branch | null;
+  /** Wipes the demo branches and starts the shop on its own single branch. */
+  createShop: (name: string, branch: Omit<Branch, "id">) => Branch;
+  plan: PlanId;
+  setPlan: (id: PlanId) => void;
+  /** Branches the current plan allows; null is unlimited. */
+  branchLimit: number | null;
+  canAddBranch: boolean;
   updateBranch: (id: string, patch: Omit<Branch, "id">) => void;
   deleteBranch: (id: string) => Result;
   shift: Shift | null;
@@ -249,6 +261,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [toppings, setToppings] = useState<Addon[]>(() =>
     onClient(TOPPINGS, () => read<Addon[]>(KEYS.toppings, TOPPINGS)),
   );
+  const [plan, setPlanState] = useState<PlanId>(() =>
+    onClient(DEFAULT_PLAN, () => read<PlanId>(KEYS.plan, DEFAULT_PLAN)),
+  );
   const [categories, setCategories] = useState<Category[]>(() =>
     onClient(DEFAULT_CATEGORIES, () =>
       read<Category[]>(KEYS.categories, DEFAULT_CATEGORIES),
@@ -328,9 +343,31 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const branch = branches.find((b) => b.id === branchId) ?? branches[0];
 
-  const addBranch = useCallback((input: Omit<Branch, "id">) => {
+  const branchLimit = planById(plan).branches;
+  /**
+   * A shop that already sits over its allowance (demo data, or a downgrade)
+   * keeps every branch it has — the plan only ever gates adding another.
+   */
+  const canAddBranch = branchLimit === null || branches.length < branchLimit;
+
+  const addBranch = useCallback(
+    (input: Omit<Branch, "id">) => {
+      // Guarded here as well as in the UI, so no caller can slip past the plan.
+      if (branchLimit !== null && branches.length >= branchLimit) return null;
+      const created: Branch = { ...input, id: crypto.randomUUID() };
+      setBranches((prev) => [...prev, created]);
+      return created;
+    },
+    [branchLimit, branches.length],
+  );
+
+  /** Sign-up: the shop's own first branch replaces the shipped demo ones. */
+  const createShop = useCallback((name: string, input: Omit<Branch, "id">) => {
     const created: Branch = { ...input, id: crypto.randomUUID() };
-    setBranches((prev) => [...prev, created]);
+    setStoreName(name);
+    setBranches([created]);
+    setBranchId(created.id);
+    setPlanState(DEFAULT_PLAN);
     return created;
   }, []);
 
@@ -591,6 +628,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     branches,
     setBranch: setBranchId,
     addBranch,
+    createShop,
+    plan,
+    setPlan: setPlanState,
+    branchLimit,
+    canAddBranch,
     updateBranch,
     deleteBranch,
     shift,

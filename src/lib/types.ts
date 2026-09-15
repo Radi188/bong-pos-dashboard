@@ -169,6 +169,29 @@ export type Branch = {
   mapUrl?: string;
 };
 
+/* ------------------------------------------------------------------ plans */
+
+export type PlanId = "starter" | "growth" | "pro";
+
+export type Plan = {
+  id: PlanId;
+  /** Branches the plan allows; null is unlimited. */
+  branches: number | null;
+  /** USD per month. */
+  price: number;
+};
+
+export const PLANS: Plan[] = [
+  { id: "starter", branches: 1, price: 0 },
+  { id: "growth", branches: 3, price: 19 },
+  { id: "pro", branches: null, price: 49 },
+];
+
+export const DEFAULT_PLAN: PlanId = "starter";
+
+export const planById = (id: PlanId) =>
+  PLANS.find((p) => p.id === id) ?? PLANS[0];
+
 export const BRANCHES: Branch[] = [
   {
     id: "penghout",
